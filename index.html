@@ -39,10 +39,9 @@
           <a class="nav__link" href="#equipo">Equipo</a>
           <a class="nav__link" href="#ubicacion">Ubicación</a>
 
-          <!-- FUERA de página principal (solo por menú) -->
           <a class="nav__link nav__cta" href="#reserva">Reservar turno</a>
           <a class="nav__link" href="#admin">Turnos</a>
-          <a class="nav__link" href="#acceso">Iniciar sesión</a>
+          <a class="nav__link" href="#acceso">Portal Admin</a>
         </nav>
       </div>
     </header>
@@ -50,10 +49,9 @@
     <main id="app">
       <!-- ==========================================================
          VIEW: INICIO (PÁGINA PRINCIPAL)
-         SOLO: RF-01, RF-02, RF-03, RF-04, RF-12, RF-13
          ========================================================== -->
       <div id="view-inicio" class="view is-active">
-        <!-- ✅ Banner full-width (ocupa toda la pantalla horizontalmente) -->
+        <!--Banner full-width (ocupa toda la pantalla horizontalmente) -->
         <section
           class="banner"
           id="inicio"
@@ -65,7 +63,7 @@
               background-image: url(&quot;https://images.unsplash.com/photo-1629909614456-6b1c5c94cecc?q=80&w=1194&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&quot;);
             "
             role="img"
-            aria-label="Frente o interior de Veterinaria Huellas"
+            aria-label="Interior de Veterinaria Huellas"
           >
             <div class="banner__overlay">
               <div class="container banner__content">
@@ -84,7 +82,7 @@
           </div>
         </section>
 
-        <!-- ✅ Tarjetas informativas debajo del banner -->
+        <!--Tarjetas informativas debajo del banner -->
         <section
           class="section hero hero--solo"
           aria-label="Información rápida"
@@ -113,28 +111,17 @@
           </div>
         </section>
 
-        <!-- ✅ Servicios -->
+        <!--Servicios -->
         <section id="servicios" class="section">
           <div class="container">
             <div class="section__head">
               <h2>Servicios</h2>
             </div>
-
-            <div class="filters" role="group" aria-label="Filtrar servicios">
-              <button class="chip is-active" data-service-filter="all">
-                Todos
-              </button>
-              <button class="chip" data-service-filter="salud">Salud</button>
-              <button class="chip" data-service-filter="estetica">
-                Estética/Baño
-              </button>
-            </div>
-
             <div class="cardsGrid" id="servicesGrid" aria-live="polite"></div>
           </div>
         </section>
 
-        <!-- ✅ Equipo -->
+        <!--Equipo -->
         <section id="equipo" class="section section--soft">
           <div class="container">
             <div class="section__head">
@@ -144,7 +131,7 @@
           </div>
         </section>
 
-        <!-- ✅ Galería (ahora va después del equipo) -->
+        <!--Galería (ahora va después del equipo) -->
         <section id="galeria" class="section" aria-label="Galería de trabajos">
           <div class="container">
             <div class="section__head">
@@ -277,7 +264,7 @@
           </div>
         </section>
 
-        <!-- ✅ Información -->
+        <!--Contacto -->
         <section id="info" class="section">
           <div class="container infoSplit">
             <div>
@@ -305,7 +292,7 @@
           </div>
         </section>
 
-        <!-- ✅ Ubicación -->
+        <!--Ubicación -->
         <section id="ubicacion" class="section section--soft">
           <div class="container">
             <div class="section__head">
@@ -316,12 +303,13 @@
               <iframe
                 class="map"
                 title="Mapa Veterinaria Huellas"
-                src="https://www.google.com/maps?q=18%20de%20Julio%2C%20Montevideo%2C%20Uruguay&z=16&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.9999999999995!2d-56.188!3d-34.906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959f810000000001%3A0x000000000000000!2sCuareim%201451%2C%2011100%20Montevideo%2C%20Uruguay!5e0!3m2!1ses!2suy!4v1700000000000!5m2!1ses!2suy"
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
               >
               </iframe>
             </div>
+            <p><strong>Dirección:</strong> Cuareim 1451, Montevideo</p>
           </div>
         </section>
       </div>

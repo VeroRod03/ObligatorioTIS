@@ -47,7 +47,7 @@ const professionals = [
     bio: "Enfoque en piel, alergias y cuidados.",
     initials: "MS",
     photo:
-      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
+      "https://plus.unsplash.com/premium_photo-1661740497193-6aeca35e1b01?mark=https:%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzI4MDQyNjg2fA&ixlib=rb-4.0.3",
   },
   {
     id: "v3",
@@ -66,7 +66,7 @@ const professionals = [
     bio: "Paciencia y cuidado con cada mascota.",
     initials: "CP",
     photo:
-      "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "e2",
@@ -75,7 +75,7 @@ const professionals = [
     bio: "Estilos cómodos y seguros según raza.",
     initials: "LF",
     photo:
-      "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=800&q=80",
+      "https://media.istockphoto.com/id/586048438/es/foto/veterinario-sosteniendo-cat.webp?a=1&b=1&s=612x612&w=0&k=20&c=mUh9CTrfTDVdKObmQxCvuLPpA1wXDT9E05B_spFat6w=",
   },
   {
     id: "e3",
@@ -230,17 +230,16 @@ function handleRoute() {
 }
 
 // ---------- Render servicios ----------
-function renderServices(filter = "all") {
+function renderServices() {
   const grid = $("#servicesGrid");
-  const list =
-    filter === "all" ? services : services.filter((s) => s.type === filter);
+  const list = services; // siempre todos
 
   grid.innerHTML = list
     .map((s) => {
       const imgSrc =
         s.type === "salud"
-          ? "https://images.unsplash.com/photo-1733783489145-f3d3ee7a9ccf?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          : "https://images.unsplash.com/photo-1611173622933-91942d394b04?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+          ? "https://images.unsplash.com/photo-1733783489145-f3d3ee7a9ccf?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0"
+          : "https://images.unsplash.com/photo-1611173622933-91942d394b04?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0";
 
       const imgAlt =
         s.type === "salud"
