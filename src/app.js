@@ -732,7 +732,7 @@ function initAdmin() {
 
       // estado
       adminFilter = btn.dataset.adminFilter;
-      adminDateFilter = null; // 👈 limpiar fecha
+      adminDateFilter = null; // limpiar fecha
 
       renderAdminTable();
     });
@@ -812,6 +812,9 @@ function renderAdminTable() {
     const keyB = b.dateISO + " " + b.time;
     return keyA.localeCompare(keyB);
   });
+
+  //slice hace una copia, sort, junto con el compare, ordena los turnos por fecha
+  //la fecha y hora están guardadas como texto, las comparamos como tal, en ese formato
 
   if (view.length === 0) {
     tbody.innerHTML = `
