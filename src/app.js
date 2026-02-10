@@ -47,7 +47,7 @@ const professionals = [
     bio: "Enfoque en piel, alergias y cuidados.",
     initials: "MS",
     photo:
-      "https://plus.unsplash.com/premium_photo-1661740497193-6aeca35e1b01?mark=https:%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzI4MDQyNjg2fA&ixlib=rb-4.0.3",
+      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "v3",
@@ -66,7 +66,7 @@ const professionals = [
     bio: "Paciencia y cuidado con cada mascota.",
     initials: "CP",
     photo:
-      "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "e2",
@@ -75,7 +75,7 @@ const professionals = [
     bio: "Estilos cómodos y seguros según raza.",
     initials: "LF",
     photo:
-      "https://media.istockphoto.com/id/586048438/es/foto/veterinario-sosteniendo-cat.webp?a=1&b=1&s=612x612&w=0&k=20&c=mUh9CTrfTDVdKObmQxCvuLPpA1wXDT9E05B_spFat6w=",
+      "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "e3",
@@ -230,16 +230,17 @@ function handleRoute() {
 }
 
 // ---------- Render servicios ----------
-function renderServices() {
+function renderServices(filter = "all") {
   const grid = $("#servicesGrid");
-  const list = services; // siempre todos
+  const list =
+    filter === "all" ? services : services.filter((s) => s.type === filter);
 
   grid.innerHTML = list
     .map((s) => {
       const imgSrc =
         s.type === "salud"
-          ? "https://images.unsplash.com/photo-1733783489145-f3d3ee7a9ccf?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0"
-          : "https://images.unsplash.com/photo-1611173622933-91942d394b04?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0";
+          ? "https://images.unsplash.com/photo-1733783489145-f3d3ee7a9ccf?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          : "https://images.unsplash.com/photo-1611173622933-91942d394b04?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
       const imgAlt =
         s.type === "salud"
@@ -263,7 +264,7 @@ function renderServices() {
             ${
               s.type === "salud"
                 ? "Turno médico · 30 min"
-                : "Servicio estético · 30 min"
+                : "Servicio estético · 1 hora"
             }
           </span>
           <div class="price">$${s.price}</div>
@@ -522,24 +523,28 @@ function profById(id) {
 }
 
 function initBooking() {
-  // Servicios
-
+  // --- Cambio de servicio ---
   $("#serviceType").addEventListener("change", () => {
     const serviceId = $("#serviceType").value;
     const service = serviceById(serviceId);
 
+    // Recarga profesionales según el tipo
     renderProfessionalOptions(service?.type || "");
+
+    // Resetea horarios
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
   });
 
+  // --- Cambio de fecha o profesional ---
   $("#date").addEventListener("change", updateAvailableTimes);
   $("#professionalId").addEventListener("change", updateAvailableTimes);
 
+  // --- Botón limpiar ---
   $("#resetBooking").addEventListener("click", () => {
     $("#bookingForm").reset();
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
     renderProfessionalOptions("");
-    renderServiceOptions("");
+
   });
 
   $("#bookingForm").addEventListener("submit", (e) => {
@@ -553,6 +558,7 @@ function initBooking() {
     const petName = $("#petName").value.trim();
     const phone = $("#phone").value.trim();
 
+    // Validación básica
     if (
       !serviceId ||
       !professionalId ||
@@ -566,27 +572,33 @@ function initBooking() {
       return;
     }
 
-    // Control horario (US-08)
-    if (!isWithinOpeningHours(dateISO, time)) {
+    // Duración según servicio
+    const service = serviceById(serviceId);
+    const duration = service?.type === "estetica" ? 60 : 30;
+
+    // Validación de horario con nueva duración
+    if (!isWithinOpeningHours(dateISO, time, duration)) {
       showToast("Ese horario está fuera del horario de atención.");
       return;
     }
 
-    // Evitar doble reserva mismo profesional + fecha + hora
+    // Verificar que el horario no esté ocupado
     const bookings = getBookings();
-    const clash = bookings.some(
+    const ocupado = bookings.some(
       (b) =>
         b.status === "pendiente" &&
         b.professionalId === professionalId &&
         b.dateISO === dateISO &&
-        b.time === time,
+        b.time === time
     );
-    if (clash) {
+
+    if (ocupado) {
       showToast("Ese horario ya está ocupado para ese profesional.");
       updateAvailableTimes();
       return;
     }
 
+    // Crear turno
     const newBooking = {
       id: crypto.randomUUID(),
       status: "pendiente",
@@ -602,23 +614,27 @@ function initBooking() {
     bookings.push(newBooking);
     setBookings(bookings);
 
+    // Mostrar confirmación en modal
     const s = serviceById(serviceId);
     const p = profById(professionalId);
+
     openModal(
-      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${dateISO} a las ${time}.`,
+      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${dateISO} a las ${time}.`
     );
+
     showToast("Reserva registrada ✅");
 
+    // Reset del formulario
     $("#bookingForm").reset();
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
     renderProfessionalOptions("");
     renderAdminTable();
   });
 
-  // Fecha mínima hoy
+  // Fecha mínima = hoy
   $("#date").min = formatDateISO(new Date());
 
-  // Inicial
+  // Inicializar profesionales (vacío hasta elegir servicio)
   renderProfessionalOptions("");
 }
 
@@ -646,29 +662,31 @@ function renderProfessionalOptions(type) {
  * Sáb 09:00–12:30 (último turno inicia 12:00)
  * Turno 30 min.
  */
-function isWithinOpeningHours(dateISO, time) {
+function isWithinOpeningHours(dateISO, time, durationMin) {
   const d = new Date(dateISO + "T00:00:00");
-  const day = d.getDay(); // 0 domingo, 6 sábado
-  if (day === 0) return false; // domingo cerrado
+  const day = d.getDay();
+  if (day === 0) return false; // domingo
 
   const [hh, mm] = time.split(":").map(Number);
   const minutes = hh * 60 + mm;
 
   const open = 9 * 60;
   const close = day === 6 ? 12 * 60 + 30 : 18 * 60;
-  return minutes >= open && minutes <= close - 30;
+
+  // El inicio debe permitir que termine ANTES o IGUAL al cierre
+  return minutes >= open && minutes <= close - durationMin;
 }
 
-function generateTimeSlots(dateISO) {
+function generateTimeSlots(dateISO, durationMin) {
   const d = new Date(dateISO + "T00:00:00");
   const day = d.getDay();
-  if (day === 0) return []; // domingo
+  if (day === 0) return []; // domingo cerrado
 
   const open = 9 * 60;
   const close = day === 6 ? 12 * 60 + 30 : 18 * 60;
 
   const slots = [];
-  for (let m = open; m <= close - 30; m += 30) {
+  for (let m = open; m <= close - durationMin; m += durationMin) {
     const h = Math.floor(m / 60);
     const mm = m % 60;
     slots.push(`${pad2(h)}:${pad2(mm)}`);
@@ -686,7 +704,12 @@ function updateAvailableTimes() {
     return;
   }
 
-  const allSlots = generateTimeSlots(dateISO);
+  // Duración según servicio seleccionado
+  const serviceId = $("#serviceType").value;
+  const service = serviceById(serviceId);
+  const duration = service?.type === "estetica" ? 60 : 30;
+
+  const allSlots = generateTimeSlots(dateISO, duration);
   if (allSlots.length === 0) {
     timeSelect.innerHTML = `<option value="">Cerrado (domingo)</option>`;
     return;
