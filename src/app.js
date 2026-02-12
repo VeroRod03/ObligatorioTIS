@@ -10,7 +10,7 @@ const LS_KEYS = {
 };
 
 // ---------- Datos precargados ----------
-const services = [
+const servicios = [
   {
     id: "med_consulta",
     title: "Consulta médica",
@@ -28,7 +28,7 @@ const services = [
   },
 ];
 
-const professionals = [
+const profesionales = [
   {
     id: "v1",
     name: "Dra. Sofía Martínez",
@@ -89,7 +89,7 @@ const professionals = [
 ];
 
 // Galería con imágenes REALES (online) + fallback
-const gallerySlides = [
+const slidesGaleria = [
   {
     label: "Consulta general",
     img: "https://images.unsplash.com/photo-1728013274420-ed02b1f58887?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -233,7 +233,7 @@ function handleRoute() {
 function renderServices(filter = "all") {
   const grid = $("#servicesGrid");
   const list =
-    filter === "all" ? services : services.filter((s) => s.type === filter);
+    filter === "all" ? servicios : servicios.filter((s) => s.type === filter);
 
   grid.innerHTML = list
     .map((s) => {
@@ -289,7 +289,7 @@ function initServiceFilters() {
 // ---------- Render equipo ----------
 function renderTeam() {
   const grid = $("#teamGrid");
-  grid.innerHTML = professionals
+  grid.innerHTML = profesionales
     .map(
       (p) => `
     <article class="card">
@@ -320,7 +320,7 @@ function initCarousel() {
   const prev = $("#prevSlide");
   const next = $("#nextSlide");
 
-  track.innerHTML = gallerySlides
+  track.innerHTML = slidesGaleria
     .map(
       (s, i) => `
     <div class="slide" data-index="${i}">
@@ -331,7 +331,7 @@ function initCarousel() {
     .join("");
 
   $$(".slide").forEach((el, i) => {
-    const s = gallerySlides[i];
+    const s = slidesGaleria[i];
     el.style.backgroundImage = s.fallbackGradient;
 
     const img = new Image();
@@ -339,14 +339,14 @@ function initCarousel() {
     img.src = s.img;
   });
 
-  dotsWrap.innerHTML = gallerySlides
+  dotsWrap.innerHTML = slidesGaleria
     .map((_, i) => `<span class="dot" data-dot="${i}"></span>`)
     .join("");
   const dots = $$("#carouselDots .dot");
 
   let index = 0;
   function go(i) {
-    index = (i + gallerySlides.length) % gallerySlides.length;
+    index = (i + slidesGaleria.length) % slidesGaleria.length;
     track.style.transform = `translateX(-${index * 100}%)`;
     dots.forEach((d) => d.classList.remove("is-active"));
     dots[index]?.classList.add("is-active");
@@ -493,7 +493,7 @@ function getBookings() {
       petName: "Milo",
       phone: "09 111 111",
       serviceId: "med_consulta",
-      professionalId: "v1",
+      profesionalId: "v1",
       dateISO: formatDateISO(new Date()),
       time: "10:00",
     },
@@ -505,7 +505,7 @@ function getBookings() {
       petName: "Manchitas",
       phone: "07 222 333",
       serviceId: "estetica_completa",
-      professionalId: "e1",
+      profesionalId: "e1",
       dateISO: formatDateISO(new Date()),
       time: "14:00",
     },
@@ -516,10 +516,10 @@ function setBookings(list) {
 }
 
 function serviceById(id) {
-  return services.find((s) => s.id === id);
+  return servicios.find((s) => s.id === id);
 }
 function profById(id) {
-  return professionals.find((p) => p.id === id);
+  return profesionales.find((p) => p.id === id);
 }
 
 function initBooking() {
@@ -537,7 +537,7 @@ function initBooking() {
 
   // --- Cambio de fecha o profesional ---
   $("#date").addEventListener("change", updateAvailableTimes);
-  $("#professionalId").addEventListener("change", updateAvailableTimes);
+  $("#profesionalId").addEventListener("change", updateAvailableTimes);
 
   // --- Botón limpiar ---
   $("#resetBooking").addEventListener("click", () => {
@@ -551,7 +551,7 @@ function initBooking() {
     e.preventDefault();
 
     const serviceId = $("#serviceType").value;
-    const professionalId = $("#professionalId").value;
+    const profesionalId = $("#profesionalId").value;
     const dateISO = $("#date").value;
     const time = $("#time").value;
     const ownerName = $("#ownerName").value.trim();
@@ -561,7 +561,7 @@ function initBooking() {
     // Validación básica
     if (
       !serviceId ||
-      !professionalId ||
+      !profesionalId ||
       !dateISO ||
       !time ||
       !ownerName ||
@@ -587,7 +587,7 @@ function initBooking() {
     const ocupado = bookings.some(
       (b) =>
         b.status === "pendiente" &&
-        b.professionalId === professionalId &&
+        b.profesionalId === profesionalId &&
         b.dateISO === dateISO &&
         b.time === time
     );
@@ -606,7 +606,7 @@ function initBooking() {
       petName,
       phone,
       serviceId,
-      professionalId,
+      profesionalId,
       dateISO,
       time,
     };
@@ -616,7 +616,7 @@ function initBooking() {
 
     // Mostrar confirmación en modal
     const s = serviceById(serviceId);
-    const p = profById(professionalId);
+    const p = profById(profesionalId);
 
     openModal(
       `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${dateISO} a las ${time}.`
@@ -639,10 +639,10 @@ function initBooking() {
 }
 
 function renderProfessionalOptions(type) {
-  const select = $("#professionalId");
+  const select = $("#profesionalId");
   const list = type
-    ? professionals.filter((p) => p.role === type)
-    : professionals;
+    ? profesionales.filter((p) => p.role === type)
+    : profesionales;
 
   select.innerHTML =
     `<option value="">Elegir...</option>` +
@@ -696,7 +696,7 @@ function generateTimeSlots(dateISO, durationMin) {
 
 function updateAvailableTimes() {
   const dateISO = $("#date").value;
-  const professionalId = $("#professionalId").value;
+  const profesionalId = $("#profesionalId").value;
   const timeSelect = $("#time");
 
   if (!dateISO) {
@@ -722,7 +722,7 @@ function updateAvailableTimes() {
         (b) =>
           b.status === "pendiente" &&
           b.dateISO === dateISO &&
-          (!professionalId || b.professionalId === professionalId),
+          (!profesionalId || b.profesionalId === profesionalId),
       )
       .map((b) => b.time),
   );
@@ -853,7 +853,7 @@ function renderAdminTable() {
   tbody.innerHTML = view
     .map((b) => {
       const s = serviceById(b.serviceId);
-      const p = profById(b.professionalId);
+      const p = profById(b.profesionalId);
       const stateClass =
         b.status === "pendiente" ? "state--pendiente" : "state--cancelada";
 
@@ -904,7 +904,7 @@ function main() {
 }
 
 document.addEventListener("DOMContentLoaded", main);
-
+/*
 if (typeof module !== "undefined") {​
   module.exports = {​
     readLS,
@@ -944,3 +944,4 @@ if (typeof module !== "undefined") {​
     main
   };​
 }​
+*/
