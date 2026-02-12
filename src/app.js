@@ -117,8 +117,15 @@ const slidesGaleria = [
 ];
 
 // ---------- Helpers ----------
+
+/*
+estas constantes son solo para no escribir documentquerySelector constantentemente,
+le pasas el nombre de selector de css. $ busca el primer elemento que matchee, $$ busca todos
+*/
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
+
+/* read y write nos permiten manejar la informacion sin una base de datos */
 
 function readLS(key, fallback) {
   try {
@@ -131,6 +138,8 @@ function readLS(key, fallback) {
 function writeLS(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
+
+/*agrega 0 a la izquierda en caso de ser necesario; como siguiendo un formato*/
 
 function pad2(n) {
   return String(n).padStart(2, "0");
@@ -618,8 +627,10 @@ function initBooking() {
     const s = serviceById(serviceId);
     const p = profById(profesionalId);
 
+    const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
+
     openModal(
-      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${dateISO} a las ${time}.`
+      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${pad2(fecha.getDay())}/${pad2(fecha.getMonth())}/${fecha.getFullYear()} a las ${time}.`
     );
 
     showToast("Reserva registrada ✅");
