@@ -904,3 +904,43 @@ function main() {
 }
 
 document.addEventListener("DOMContentLoaded", main);
+
+if (typeof module !== "undefined") {​
+  module.exports = {​
+    readLS,
+    writeLS,
+    pad2,
+    formatDateISO,
+    showToast,
+    openModal,
+    closeModal,
+    escapeHtml,
+    initNav,
+    showView,
+    handleRoute,
+    renderServices,
+    initServiceFilters,
+    renderTeam,
+    initCarousel,
+    getUsers,
+    setUsers,
+    getSession,
+    setSession,
+    updateSessionLabel,
+    initAuth,
+    getBookings,
+    setBookings,
+    serviceById,
+    profById,
+    initBooking,
+    renderProfessionalOptions,
+    isWithinOpeningHours,
+    generateTimeSlots,
+    updateAvailableTimes,
+    initAdmin,
+    getSelectedBookingIds,
+    renderAdminTable,
+    initModal,
+    main
+  };​
+}​
