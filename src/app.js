@@ -47,7 +47,7 @@ const profesionales = [
     bio: "Enfoque en piel, alergias y cuidados.",
     initials: "MS",
     photo:
-      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
+      "https://img.freepik.com/fotos-premium/gato-escucha-veterinario-hombre-estetoscopio-cita-clinica-veterinaria_255667-35330.jpg?w=2000",
   },
   {
     id: "v3",
@@ -57,7 +57,7 @@ const profesionales = [
     bio: "Vacunas, controles y bienestar.",
     initials: "VR",
     photo:
-      "https://images.unsplash.com/photo-1551884170-09fb70a3a2ed?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "e1",
@@ -66,7 +66,7 @@ const profesionales = [
     bio: "Paciencia y cuidado con cada mascota.",
     initials: "CP",
     photo:
-      "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "e2",
@@ -75,7 +75,7 @@ const profesionales = [
     bio: "Estilos cómodos y seguros según raza.",
     initials: "LF",
     photo:
-      "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=800&q=80",
+      "https://media.istockphoto.com/id/2102632990/es/foto/médico-veterinario-de-hombre-feliz-en-uniforme-azul-abrazando-al-perro-corgi-galés-de-pembroke.webp?a=1&b=1&s=612x612&w=0&k=20&c=1Mj0L_QdndYlADIXWk8PQdXpjJN-nyl7LXz_eweSMuM=",
   },
   {
     id: "e3",
@@ -151,6 +151,9 @@ function formatDateISO(d) {
   return `${y}-${m}-${day}`;
 }
 
+//es para los popups, lo rellena con un mensaje, lo hace visible con el is show,
+//el clearTimeout es para cancelar el timer anterior si ya habia uno, 2600 es para que dure 2.6 segundos
+
 function showToast(msg) {
   const toast = $("#toast");
   toast.textContent = msg;
@@ -158,6 +161,8 @@ function showToast(msg) {
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => toast.classList.remove("is-show"), 2600);
 }
+
+//lo mismo pero para el cartel de confirmación
 
 function openModal(text) {
   const modal = $("#modal");
@@ -171,6 +176,10 @@ function closeModal() {
   modal.setAttribute("aria-hidden", "true");
 }
 
+/*
+
+esta funcion es por seguridad, para que el usuario no pueda rellenar los campos
+con texto que se pueda interpretar como codigo
 function escapeHtml(str) {
   return String(str).replace(
     /[&<>"']/g,
@@ -184,6 +193,7 @@ function escapeHtml(str) {
       })[s],
   );
 }
+  */
 
 // ---------- Navegación móvil ----------
 function initNav() {
@@ -203,6 +213,9 @@ function initNav() {
     });
   });
 }
+
+//el id del view es view inicio, admin, o acceso. por eso funciona que oculte/muestre
+//toda esa seccion
 
 // ---------- Router (hash) ----------
 const ROUTES = {
@@ -224,11 +237,14 @@ function showView(viewId) {
   window.scrollTo(0, 0);
 }
 
+ 
 function handleRoute() {
   const raw = (location.hash || "#inicio").replace("#", "");
   const route = ROUTES[raw] || ROUTES["inicio"];
 
   showView(route.view);
+
+  //el tiemout es para esperar un poco a que carguen los estilos y todo sea visible
 
   if (route.scrollTo) {
     setTimeout(() => {
@@ -239,12 +255,10 @@ function handleRoute() {
 }
 
 // ---------- Render servicios ----------
-function renderServices(filter = "all") {
+function cargarServicios() {
   const grid = $("#servicesGrid");
-  const list =
-    filter === "all" ? servicios : servicios.filter((s) => s.type === filter);
 
-  grid.innerHTML = list
+  grid.innerHTML = servicios
     .map((s) => {
       const imgSrc =
         s.type === "salud"
@@ -283,19 +297,9 @@ function renderServices(filter = "all") {
     .join("");
 }
 
-function initServiceFilters() {
-  $$(".chip[data-service-filter]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      $$(".chip[data-service-filter]").forEach((b) =>
-        b.classList.remove("is-active"),
-      );
-      btn.classList.add("is-active");
-      renderServices(btn.dataset.serviceFilter);
-    });
-  });
-}
-
 // ---------- Render equipo ----------
+
+// el alt=p.name iba con el escapehtml
 function renderTeam() {
   const grid = $("#teamGrid");
   grid.innerHTML = profesionales
@@ -304,7 +308,7 @@ function renderTeam() {
     <article class="card">
       <div class="card__top">
         <div class="avatar avatar--photo" aria-hidden="true">
-          <img src="${p.photo || ""}" alt="${escapeHtml(p.name)}" onerror="this.remove(); this.parentElement.textContent='${p.initials}'">
+          <img src="${p.photo || ""}" alt="${p.name}" onerror="this.remove(); this.parentElement.textContent='${p.initials}'">
         </div>
         <div class="card__meta">
           <strong>${p.name}</strong>
@@ -861,6 +865,8 @@ function renderAdminTable() {
     return;
   }
 
+  // b.ownerName, b.petName, s.title, p.name iban con escapeHtml
+
   tbody.innerHTML = view
     .map((b) => {
       const s = serviceById(b.serviceId);
@@ -874,10 +880,10 @@ function renderAdminTable() {
           <input type="checkbox" data-id="${b.id}" aria-label="Seleccionar turno" />
         </td>
         <td><span class="state ${stateClass}">${b.status}</span></td>
-        <td>${escapeHtml(b.ownerName)}</td>
-        <td>${escapeHtml(b.petName)}</td>
-        <td>${s ? escapeHtml(s.title) : "-"}</td>
-        <td>${p ? escapeHtml(p.name) : "-"}</td>
+        <td>${b.ownerName}</td>
+        <td>${b.petName}</td>
+        <td>${s ? s.title : "-"}</td>
+        <td>${p ? p.name : "-"}</td>
         <td>${b.dateISO}</td>
         <td>${b.time}</td>
       </tr>
@@ -901,8 +907,7 @@ function main() {
   initNav();
   initCarousel();
 
-  renderServices("all");
-  initServiceFilters();
+  cargarServicios();
   renderTeam();
 
   initAuth();
@@ -925,12 +930,10 @@ if (typeof module !== "undefined") {​
     showToast,
     openModal,
     closeModal,
-    escapeHtml,
     initNav,
     showView,
     handleRoute,
-    renderServices,
-    initServiceFilters,
+    cargarServicios,
     renderTeam,
     initCarousel,
     getUsers,
