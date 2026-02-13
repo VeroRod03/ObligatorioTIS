@@ -167,6 +167,11 @@ main {
   background: rgba(167, 243, 208, 0.35);
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
+
+.nav__logout {
+  background: rgba(243, 167, 189, 0.35);
+  border: 1px solid rgba(185, 16, 50, 0.25);
+}
 .nav__toggle {
   display: none;
   width: 46px;

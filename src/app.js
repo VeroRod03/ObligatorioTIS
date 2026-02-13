@@ -300,7 +300,7 @@ function cargarServicios() {
 // ---------- Render equipo ----------
 
 // el alt=p.name iba con el escapehtml
-function renderTeam() {
+function cargarEquipo() {
   const grid = $("#teamGrid");
   grid.innerHTML = profesionales
     .map(
@@ -326,12 +326,14 @@ function renderTeam() {
     .join("");
 }
 
-// ---------- Carousel ----------
-function initCarousel() {
+// ---------- Galeria ----------
+function cargarGaleria() {
   const track = $("#carouselTrack");
   const dotsWrap = $("#carouselDots");
   const prev = $("#prevSlide");
   const next = $("#nextSlide");
+
+  //primero crea los slides y le pone los labels
 
   track.innerHTML = slidesGaleria
     .map(
@@ -343,6 +345,8 @@ function initCarousel() {
     )
     .join("");
 
+  //aca primero pone un gradiente mientras la imagen carga, y despues crea/carga la imagen en si
+
   $$(".slide").forEach((el, i) => {
     const s = slidesGaleria[i];
     el.style.backgroundImage = s.fallbackGradient;
@@ -352,12 +356,22 @@ function initCarousel() {
     img.src = s.img;
   });
 
+  //crea los puntos, uno por slide, y te guardas el indice
+
   dotsWrap.innerHTML = slidesGaleria
     .map((_, i) => `<span class="dot" data-dot="${i}"></span>`)
     .join("");
   const dots = $$("#carouselDots .dot");
 
   let index = 0;
+
+  /* 
+  - primero controla que el indice siempre quede entre el rango 0 y 3
+  - lo de transorm le va restando 100% como para que el track se vaya corriendo a la izquierda, y
+  muestres la siguiente
+  - despues "apaga" todos los dots y selecciona cual encender, el del actual
+  */
+
   function go(i) {
     index = (i + slidesGaleria.length) % slidesGaleria.length;
     track.style.transform = `translateX(-${index * 100}%)`;
@@ -382,6 +396,9 @@ function initCarousel() {
 
   go(0);
 
+  // para que haya autoplay, cada 4.2 segundos van pasando y cada vez que apretemos un boton
+  // el timer se resetea, y vuelve a llamar a auto
+
   let timer = null;
   function auto() {
     timer = setInterval(() => go(index + 1), 4200);
@@ -393,14 +410,11 @@ function initCarousel() {
   auto();
 }
 
-// ---------- Acceso (Registro/Login) ----------
+// ---------- Acceso (Login) ----------
 function getUsers() {
   return readLS(LS_KEYS.users, [
     { username: "admin", password: "admin1234", isAdmin: true },
   ]);
-}
-function setUsers(users) {
-  writeLS(LS_KEYS.users, users);
 }
 
 function getSession() {
@@ -413,84 +427,82 @@ function setSession(sess) {
 
 function updateSessionLabel() {
   const sess = getSession();
-  $("#sessionLabel").textContent = sess?.username
-    ? `${sess.username}${sess.isAdmin ? " (admin)" : ""}`
-    : "Invitado";
+
+// se fija si hay una sesion activa (usuario logueado), en ese caso se escribe
+// el nombre del usuario, si no, se pone Invitado
+
+  const label = $("#sessionLabel");
+  if (label) {
+    label.textContent = sess?.username
+      ? `${sess.username}`
+      : "Invitado";
+  }
+
+  const isLoggedIn = !!sess?.username;
+
+  // oculta los botones de cerrar sesión
+
+  const logoutBtn = $("#logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.hidden = !isLoggedIn;
+    logoutBtn.style.display = isLoggedIn ? "" : "none";
+  }
+
+  const logoutBtnAccess = $("#logoutBtnAccess");
+  if (logoutBtnAccess) {
+    logoutBtnAccess.hidden = !isLoggedIn;
+    logoutBtnAccess.style.display = isLoggedIn ? "" : "none";
+  }
 }
 
 function initAuth() {
   updateSessionLabel();
 
-  $("#registerForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = $("#regUser").value.trim();
-    const password = $("#regPass").value;
+  // Login
+  const loginForm = $("#loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = $("#logUser").value.trim();
+      const password = $("#logPass").value;
 
-    if (!username) {
-      showToast("Ingresá un nombre de usuario.");
-      return;
-    }
-    if (password.length < 8) {
-      showToast("La contraseña debe tener mínimo 8 caracteres.");
-      return;
-    }
+      const users = getUsers();
+      const found = users.find(
+        (u) =>
+          u.username.toLowerCase() === username.toLowerCase() &&
+          u.password === password,
+      );
 
-    const users = getUsers();
-    if (
-      users.some((u) => u.username.toLowerCase() === username.toLowerCase())
-    ) {
-      showToast("Ese usuario ya existe. Probá otro.");
-      return;
-    }
+      if (!found) {
+        showToast("Credenciales incorrectas.");
+        return;
+      }
 
-    users.push({ username, password, isAdmin: false });
-    setUsers(users);
-    showToast("Registro exitoso ✅ Ya podés iniciar sesión.");
-    $("#registerForm").reset();
-  });
-
-  $("#loginForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = $("#logUser").value.trim();
-    const password = $("#logPass").value;
-
-    const users = getUsers();
-    const found = users.find(
-      (u) =>
-        u.username.toLowerCase() === username.toLowerCase() &&
-        u.password === password,
-    );
-
-    if (!found) {
-      showToast("Credenciales incorrectas.");
-      return;
-    }
-
-    setSession({ username: found.username, isAdmin: !!found.isAdmin });
-    showToast("Sesión iniciada ✅");
-    location.hash = "#inicio";
-  });
-
-  $("#logoutBtn").addEventListener("click", () => {
-    setSession({ username: null, isAdmin: false });
-    showToast("Sesión cerrada.");
-  });
-
-  // ---------- Toggle Login / Registro ----------
-  const loginCard = $("#loginCard");
-  const registerCard = $("#registerCard");
-  const showRegisterBtn = $("#showRegister");
-  const showLoginBtn = $("#showLogin");
-
-  if (showRegisterBtn && showLoginBtn) {
-    showRegisterBtn.addEventListener("click", () => {
-      loginCard.hidden = true;
-      registerCard.hidden = false;
+      setSession({ username: found.username, isAdmin: !!found.isAdmin });
+      // Limpiar campos del login luego de iniciar sesión
+      loginForm.reset();
+      showToast("Sesión iniciada ✅");
+      location.hash = "#inicio";
     });
+  }
 
-    showLoginBtn.addEventListener("click", () => {
-      registerCard.hidden = true;
-      loginCard.hidden = false;
+  // Logout (nav)
+  const logoutBtn = $("#logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      setSession({ username: null, isAdmin: false });
+      if (loginForm) loginForm.reset();
+      showToast("Sesión cerrada.");
+    });
+  }
+
+  // Logout (pantalla acceso)
+  const logoutBtnAccess = $("#logoutBtnAccess");
+  if (logoutBtnAccess) {
+    logoutBtnAccess.addEventListener("click", () => {
+      setSession({ username: null, isAdmin: false });
+      if (loginForm) loginForm.reset();
+      showToast("Sesión cerrada.");
     });
   }
 }
@@ -905,10 +917,10 @@ function initModal() {
 // ---------- Init ----------
 function main() {
   initNav();
-  initCarousel();
+  cargarGaleria();
 
   cargarServicios();
-  renderTeam();
+  cargarEquipo();
 
   initAuth();
   initBooking();
@@ -934,10 +946,9 @@ if (typeof module !== "undefined") {​
     showView,
     handleRoute,
     cargarServicios,
-    renderTeam,
-    initCarousel,
+    cargarEquipo,
+    cargarGaleria,
     getUsers,
-    setUsers,
     getSession,
     setSession,
     updateSessionLabel,
