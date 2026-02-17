@@ -125,7 +125,10 @@ le pasas el nombre de selector de css. $ busca el primer elemento que matchee, $
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
-/* read y write nos permiten manejar la informacion sin una base de datos */
+/* read y write nos permiten manejar la informacion sin una base de datos
+write guarda en localStorage convirtiendo a JSON string
+read lee de local storage parseando json
+el try catch es para que no crashee la app por las dudas */
 
 function readLS(key, fallback) {
   try {
@@ -508,15 +511,20 @@ function initAuth() {
 }
 
 // ---------- Reserva (horarios + validación) ----------
-function getBookings() {
+function obtenerReservas() {
+
+  /* a readLS  se le pasa como parámetro "fallback" estas 2 reservas como para
+  "precargarlas" en caso de no haber ninguna. se crean con el dia de hoy*/
+
   return readLS(LS_KEYS.bookings, [
     {
+
+      // crypto.randomUUID es para generar un id random 
       id: crypto.randomUUID(),
       status: "pendiente",
-      username: "admin",
       ownerName: "Juana Fernández",
       petName: "Milo",
-      phone: "09 111 111",
+      phone: "091 111 111",
       serviceId: "med_consulta",
       profesionalId: "v1",
       dateISO: formatDateISO(new Date()),
@@ -525,10 +533,9 @@ function getBookings() {
     {
       id: crypto.randomUUID(),
       status: "cancelada",
-      username: "pablo03",
       ownerName: "Juana Fernández",
       petName: "Manchitas",
-      phone: "07 222 333",
+      phone: "091 222 333",
       serviceId: "estetica_completa",
       profesionalId: "e1",
       dateISO: formatDateISO(new Date()),
@@ -536,28 +543,32 @@ function getBookings() {
     },
   ]);
 }
-function setBookings(list) {
+
+function actualizarReservas(list) {
   writeLS(LS_KEYS.bookings, list);
 }
 
-function serviceById(id) {
+function servicioPorId(id) {
   return servicios.find((s) => s.id === id);
 }
-function profById(id) {
+function profesionalPorId(id) {
   return profesionales.find((p) => p.id === id);
 }
 
-function initBooking() {
+function formularioReserva() {
   // --- Cambio de servicio ---
+  /* segun el tipo de servicio seleccionado, carga los profesionales de ese tipo de servicio*/
+
   $("#serviceType").addEventListener("change", () => {
     const serviceId = $("#serviceType").value;
-    const service = serviceById(serviceId);
+    const service = servicioPorId(serviceId);
 
-    // Recarga profesionales según el tipo
-    renderProfessionalOptions(service?.type || "");
+    mostrarOpcionesProfesionales(service?.type || "");
 
-    // Resetea horarios
+    // Resetea fecha y horarios
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
+    $("#date").value = "";
+
   });
 
   // --- Cambio de fecha o profesional ---
@@ -565,11 +576,13 @@ function initBooking() {
   $("#profesionalId").addEventListener("change", updateAvailableTimes);
 
   // --- Botón limpiar ---
+
+  /* la seccion de #time tambien se resetea al resetear toda la seccion de bookingForm,
+  pero queremos que aparezca ese mensaje especificamente*/
   $("#resetBooking").addEventListener("click", () => {
     $("#bookingForm").reset();
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
-    renderProfessionalOptions("");
-
+    mostrarOpcionesProfesionales("");
   });
 
   $("#bookingForm").addEventListener("submit", (e) => {
@@ -598,7 +611,7 @@ function initBooking() {
     }
 
     // Duración según servicio
-    const service = serviceById(serviceId);
+    const service = servicioPorId(serviceId);
     const duration = service?.type === "estetica" ? 60 : 30;
 
     // Validación de horario con nueva duración
@@ -608,7 +621,7 @@ function initBooking() {
     }
 
     // Verificar que el horario no esté ocupado
-    const bookings = getBookings();
+    const bookings = obtenerReservas();
     const ocupado = bookings.some(
       (b) =>
         b.status === "pendiente" &&
@@ -637,11 +650,11 @@ function initBooking() {
     };
 
     bookings.push(newBooking);
-    setBookings(bookings);
+    actualizarReservas(bookings);
 
     // Mostrar confirmación en modal
-    const s = serviceById(serviceId);
-    const p = profById(profesionalId);
+    const s = servicioPorId(serviceId);
+    const p = profesionalPorId(profesionalId);
 
     const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
 
@@ -654,7 +667,7 @@ function initBooking() {
     // Reset del formulario
     $("#bookingForm").reset();
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
-    renderProfessionalOptions("");
+    mostrarOpcionesProfesionales("");
     renderAdminTable();
   });
 
@@ -662,10 +675,13 @@ function initBooking() {
   $("#date").min = formatDateISO(new Date());
 
   // Inicializar profesionales (vacío hasta elegir servicio)
-  renderProfessionalOptions("");
+  mostrarOpcionesProfesionales("");
 }
 
-function renderProfessionalOptions(type) {
+/* recibe un tipo de servicio, y busca en la lista de los profesionales los que
+coincidan con ese tipo. esos los carga en la lista de opciones*/
+
+function mostrarOpcionesProfesionales(type) {
   const select = $("#profesionalId");
   const list = type
     ? profesionales.filter((p) => p.role === type)
@@ -733,7 +749,7 @@ function updateAvailableTimes() {
 
   // Duración según servicio seleccionado
   const serviceId = $("#serviceType").value;
-  const service = serviceById(serviceId);
+  const service = servicioPorId(serviceId);
   const duration = service?.type === "estetica" ? 60 : 30;
 
   const allSlots = generateTimeSlots(dateISO, duration);
@@ -742,7 +758,7 @@ function updateAvailableTimes() {
     return;
   }
 
-  const bookings = getBookings();
+  const bookings = obtenerReservas();
   const occupied = new Set(
     bookings
       .filter(
@@ -802,10 +818,10 @@ function initAdmin() {
       return;
     }
 
-    const bookings = getBookings().map((b) =>
+    const bookings = obtenerReservas().map((b) =>
       ids.includes(b.id) ? { ...b, status: "cancelada" } : b,
     );
-    setBookings(bookings);
+    actualizarReservas(bookings);
     showToast("Turnos cancelados.");
     renderAdminTable();
     $("#selectAll").checked = false;
@@ -840,7 +856,7 @@ function getSelectedBookingIds() {
 
 function renderAdminTable() {
   const tbody = $("#bookingsTbody");
-  const bookings = getBookings();
+  const bookings = obtenerReservas();
 
   const todayISO = formatDateISO(new Date());
   let view = bookings;
@@ -881,8 +897,8 @@ function renderAdminTable() {
 
   tbody.innerHTML = view
     .map((b) => {
-      const s = serviceById(b.serviceId);
-      const p = profById(b.profesionalId);
+      const s = servicioPorId(b.serviceId);
+      const p = profesionalPorId(b.profesionalId);
       const stateClass =
         b.status === "pendiente" ? "state--pendiente" : "state--cancelada";
 
@@ -923,7 +939,7 @@ function main() {
   cargarEquipo();
 
   initAuth();
-  initBooking();
+  formularioReserva();
   initAdmin();
   initModal();
 
@@ -953,12 +969,12 @@ if (typeof module !== "undefined") {​
     setSession,
     updateSessionLabel,
     initAuth,
-    getBookings,
-    setBookings,
-    serviceById,
-    profById,
-    initBooking,
-    renderProfessionalOptions,
+    obtenerReservas,
+    actualizarReservas,
+    servicioPorId,
+    profesionalPorId,
+    formularioReserva,
+    mostrarOpcionesProfesionales,
     isWithinOpeningHours,
     generateTimeSlots,
     updateAvailableTimes,
