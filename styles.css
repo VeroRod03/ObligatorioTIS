@@ -613,11 +613,11 @@ main {
   border: 1px solid rgba(31, 41, 55, 0.1);
   display: inline-flex;
 }
-.state--pendiente {
+.state--activo {
   background: rgba(167, 243, 208, 0.35);
   border-color: rgba(16, 185, 129, 0.25);
 }
-.state--cancelada {
+.state--cancelado {
   background: rgba(239, 68, 68, 0.12);
   border-color: rgba(239, 68, 68, 0.25);
   color: rgba(153, 27, 27, 0.95);

@@ -32,7 +32,7 @@
         <a class="nav__link" href="#equipo">Equipo</a>
         <a class="nav__link" href="#ubicacion">Ubicación</a>
 
-        <a class="nav__link nav__cta" href="#reserva">Reservar turno</a>
+        <a class="nav__link nav__cta" href="#turno">Reservar turno</a>
         <a class="nav__link" href="#admin">Turnos</a>
         <a class="nav__link" href="#acceso">Portal Admin</a>
         <a class="nav__link nav__logout" id="logoutBtn">Cerrar sesión</a>
@@ -59,7 +59,7 @@
                 <strong>estética/baño</strong>.
               </p>
               <div class="hero__actions">
-                <a class="btn btn--primary" href="#reserva">Reservar turno</a>
+                <a class="btn btn--primary" href="#turno">Reservar turno</a>
                 <a class="btn" href="#servicios">Ver servicios</a>
               </div>
             </div>
@@ -135,8 +135,8 @@
         </div>
       </section>
 
-      <!-- Formulario de reservas -->
-      <section id="reserva" class="section section--soft">
+      <!-- Formulario de reservas de turnos -->
+      <section id="turno" class="section section--soft">
         <div class="container">
           <div class="section__head">
             <h2>Reserva de turnos</h2>
@@ -229,7 +229,7 @@
             </p>
             <p><strong>Mail:</strong> contacto@huellas.com</p>
             <p><strong>Teléfono:</strong> +598 00 000 000</p>
-            <a class="btn btn--primary" href="#reserva">Reservar ahora</a>
+            <a class="btn btn--primary" href="#turno">Reservar ahora</a>
           </div>
         </div>
       </section>
@@ -264,7 +264,7 @@
 
           <div class="panel">
             <div class="adminBar">
-              <div class="filters" role="group" aria-label="Filtros de reservas">
+              <div class="filters" role="group" aria-label="Filtros de turnos">
                 <button class="chip is-active" data-admin-filter="hoy">
                   Hoy
                 </button>
@@ -272,18 +272,18 @@
                   📅
                 </button>
                 <input type="date" id="adminDateFilter" class="adminDateInput" aria-label="Elegir fecha" />
-                <button class="chip" data-admin-filter="pendientes">
-                  Pendientes
+                <button class="chip" data-admin-filter="activos">
+                  Activos
                 </button>
-                <button class="chip" data-admin-filter="canceladas">
-                  Canceladas
+                <button class="chip" data-admin-filter="cancelados">
+                  Cancelados
                 </button>
-                <button class="chip" data-admin-filter="todas">Todas</button>
+                <button class="chip" data-admin-filter="todos">Todos</button>
               </div>
 
               <div class="adminActions">
                 <button class="btn btn--danger" id="cancelSelected">
-                  Cancelar seleccionadas
+                  Cancelar seleccionados
                 </button>
 
                 <a class="btn" href="#inicio">Volver al Inicio</a>
@@ -380,7 +380,7 @@
         </div>
 
         <div class="success__content">
-          <h3 id="modalTitle">Reserva confirmada</h3>
+          <h3 id="modalTitle">Turno confirmado</h3>
           <p id="modalText" class="success__text"></p>
 
           <div class="modal__actions">

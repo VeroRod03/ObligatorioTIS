@@ -179,24 +179,6 @@ function closeModal() {
   modal.setAttribute("aria-hidden", "true");
 }
 
-/*
-
-esta funcion es por seguridad, para que el usuario no pueda rellenar los campos
-con texto que se pueda interpretar como codigo
-function escapeHtml(str) {
-  return String(str).replace(
-    /[&<>"']/g,
-    (s) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      })[s],
-  );
-}
-  */
 
 // ---------- Navegación móvil ----------
 function initNav() {
@@ -226,7 +208,7 @@ const ROUTES = {
   servicios: { view: "view-inicio", scrollTo: "servicios" },
   equipo: { view: "view-inicio", scrollTo: "equipo" },
   galeria: { view: "view-inicio", scrollTo: "galeria" },
-  reserva: { view: "view-inicio", scrollTo: "reserva" },
+  turno: { view: "view-inicio", scrollTo: "turno" },
   ubicacion: { view: "view-inicio", scrollTo: "ubicacion" },
 
   admin: { view: "view-admin" },
@@ -510,18 +492,18 @@ function initAuth() {
   }
 }
 
-// ---------- Reserva (horarios + validación) ----------
-function obtenerReservas() {
+// ---------- Turno (horarios + validación) ----------
+function obtenerTurnos() {
 
-  /* a readLS  se le pasa como parámetro "fallback" estas 2 reservas como para
-  "precargarlas" en caso de no haber ninguna. se crean con el dia de hoy*/
+  /* a readLS  se le pasa como parámetro "fallback" estos 2 turnos como para
+  "precargarlas" en caso de no haber ninguno. Se crean con el dia de hoy*/
 
   return readLS(LS_KEYS.bookings, [
     {
 
       // crypto.randomUUID es para generar un id random 
       id: crypto.randomUUID(),
-      status: "pendiente",
+      status: "activo",
       ownerName: "Juana Fernández",
       petName: "Milo",
       phone: "091 111 111",
@@ -532,7 +514,7 @@ function obtenerReservas() {
     },
     {
       id: crypto.randomUUID(),
-      status: "cancelada",
+      status: "cancelado",
       ownerName: "Juana Fernández",
       petName: "Manchitas",
       phone: "091 222 333",
@@ -544,7 +526,7 @@ function obtenerReservas() {
   ]);
 }
 
-function actualizarReservas(list) {
+function actualizarTurnos(list) {
   writeLS(LS_KEYS.bookings, list);
 }
 
@@ -555,7 +537,7 @@ function profesionalPorId(id) {
   return profesionales.find((p) => p.id === id);
 }
 
-function formularioReserva() {
+function formularioTurno() {
   // --- Cambio de servicio ---
   /* segun el tipo de servicio seleccionado, carga los profesionales de ese tipo de servicio*/
 
@@ -572,8 +554,8 @@ function formularioReserva() {
   });
 
   // --- Cambio de fecha o profesional ---
-  $("#date").addEventListener("change", updateAvailableTimes);
-  $("#profesionalId").addEventListener("change", updateAvailableTimes);
+  $("#date").addEventListener("change", actualizarHorariosDisponibles);
+  $("#profesionalId").addEventListener("change", actualizarHorariosDisponibles);
 
   // --- Botón limpiar ---
 
@@ -615,31 +597,32 @@ function formularioReserva() {
     const duration = service?.type === "estetica" ? 60 : 30;
 
     // Validación de horario con nueva duración
-    if (!isWithinOpeningHours(dateISO, time, duration)) {
+    if (!estaDentroHorarioAtencion(dateISO, time, duration)) {
       showToast("Ese horario está fuera del horario de atención.");
       return;
     }
 
     // Verificar que el horario no esté ocupado
-    const bookings = obtenerReservas();
+    const bookings = obtenerTurnos();
     const ocupado = bookings.some(
       (b) =>
-        b.status === "pendiente" &&
+        b.status === "activo" &&
         b.profesionalId === profesionalId &&
         b.dateISO === dateISO &&
         b.time === time
     );
 
+    // Es una validación extra para asegurarse que no se pueda ingresar un horario ocupado
     if (ocupado) {
       showToast("Ese horario ya está ocupado para ese profesional.");
-      updateAvailableTimes();
+      actualizarHorariosDisponibles();
       return;
     }
 
     // Crear turno
     const newBooking = {
       id: crypto.randomUUID(),
-      status: "pendiente",
+      status: "activo",
       ownerName,
       petName,
       phone,
@@ -650,7 +633,7 @@ function formularioReserva() {
     };
 
     bookings.push(newBooking);
-    actualizarReservas(bookings);
+    actualizarTurnos(bookings);
 
     // Mostrar confirmación en modal
     const s = servicioPorId(serviceId);
@@ -662,13 +645,13 @@ function formularioReserva() {
       `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${pad2(fecha.getDay())}/${pad2(fecha.getMonth())}/${fecha.getFullYear()} a las ${time}.`
     );
 
-    showToast("Reserva registrada ✅");
+    showToast("Turno registrado ✅");
 
     // Reset del formulario
     $("#bookingForm").reset();
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
     mostrarOpcionesProfesionales("");
-    renderAdminTable();
+    renderizarTablaTurnos();
   });
 
   // Fecha mínima = hoy
@@ -703,9 +686,9 @@ function mostrarOpcionesProfesionales(type) {
  * Horarios de atención:
  * Lun–Vie 09:00–18:00 (último turno inicia 17:30)
  * Sáb 09:00–12:30 (último turno inicia 12:00)
- * Turno 30 min.
+ * Turnos de 30 min o 60 min
  */
-function isWithinOpeningHours(dateISO, time, durationMin) {
+function estaDentroHorarioAtencion(dateISO, time, durationMin) {
   const d = new Date(dateISO + "T00:00:00");
   const day = d.getDay();
   if (day === 0) return false; // domingo
@@ -720,7 +703,15 @@ function isWithinOpeningHours(dateISO, time, durationMin) {
   return minutes >= open && minutes <= close - durationMin;
 }
 
-function generateTimeSlots(dateISO, durationMin) {
+/*
+  Open y close son los horarios de apertura y cierre pero en minutos
+  Con el for se van rellenando los slots disponibles segun la duración mínima (30 o 60)
+  Se elimina el incremento de la última iteración para respetar el horario de cierre 
+  Luego se pasa de nuevo a formato de horas con la división entre 60 y se utiliza el
+  módulo entre 60 para obtener el resto 30 o 0
+*/
+
+function generarSlotsTiempo(dateISO, durationMin) {
   const d = new Date(dateISO + "T00:00:00");
   const day = d.getDay();
   if (day === 0) return []; // domingo cerrado
@@ -737,7 +728,7 @@ function generateTimeSlots(dateISO, durationMin) {
   return slots;
 }
 
-function updateAvailableTimes() {
+function actualizarHorariosDisponibles() {
   const dateISO = $("#date").value;
   const profesionalId = $("#profesionalId").value;
   const timeSelect = $("#time");
@@ -752,24 +743,28 @@ function updateAvailableTimes() {
   const service = servicioPorId(serviceId);
   const duration = service?.type === "estetica" ? 60 : 30;
 
-  const allSlots = generateTimeSlots(dateISO, duration);
+  const allSlots = generarSlotsTiempo(dateISO, duration);
   if (allSlots.length === 0) {
     timeSelect.innerHTML = `<option value="">Cerrado (domingo)</option>`;
     return;
   }
 
-  const bookings = obtenerReservas();
+  // Obtiene todas los turnos y genera una lista (occupied) con todos los horarios de
+  // los turnos activos en la fecha seleccionada y del profesional seleccionado 
+  // (todos los horarios no disponibles)
+  const bookings = obtenerTurnos();
   const occupied = new Set(
     bookings
       .filter(
         (b) =>
-          b.status === "pendiente" &&
+          b.status === "activo" &&
           b.dateISO === dateISO &&
           (!profesionalId || b.profesionalId === profesionalId),
       )
       .map((b) => b.time),
   );
 
+  // Se deshabilitan como opción los horarios ocupados 
   const options = allSlots
     .map((t) => {
       const isBusy = occupied.has(t);
@@ -785,6 +780,7 @@ let adminFilter = "hoy";
 let adminDateFilter = null; // YYYY-MM-DD o null
 
 function initAdmin() {
+  // Marca como seleccionada la opción de filtro seleccionada
   $$(".chip[data-admin-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
       // reset visual
@@ -800,10 +796,11 @@ function initAdmin() {
       adminFilter = btn.dataset.adminFilter;
       adminDateFilter = null; // limpiar fecha
 
-      renderAdminTable();
+      renderizarTablaTurnos();
     });
   });
 
+  // Marca como "checked" los turnos seleccionados
   $("#selectAll").addEventListener("change", (e) => {
     const checked = e.target.checked;
     $$("#bookingsTbody input[type='checkbox']").forEach(
@@ -811,22 +808,24 @@ function initAdmin() {
     );
   });
 
+  // Marca como cancelados los turnos seleccionados
   $("#cancelSelected").addEventListener("click", () => {
-    const ids = getSelectedBookingIds();
+    const ids = obtenerIdTurnosSeleccionados();
     if (ids.length === 0) {
       showToast("Seleccioná al menos un turno.");
       return;
     }
 
-    const bookings = obtenerReservas().map((b) =>
-      ids.includes(b.id) ? { ...b, status: "cancelada" } : b,
+    const bookings = obtenerTurnos().map((b) =>
+      ids.includes(b.id) ? { ...b, status: "cancelado" } : b,
     );
-    actualizarReservas(bookings);
+    actualizarTurnos(bookings);
     showToast("Turnos cancelados.");
-    renderAdminTable();
+    renderizarTablaTurnos();
     $("#selectAll").checked = false;
   });
 
+  // Opción de filtrado de calendario
   const dateInput = $("#adminDateFilter");
   const calendarBtn = $("#calendarFilterBtn");
 
@@ -842,21 +841,21 @@ function initAdmin() {
     );
 
     calendarBtn.classList.add("is-active");
-    renderAdminTable();
+    renderizarTablaTurnos();
   });
 
-  renderAdminTable();
+  renderizarTablaTurnos();
 }
 
-function getSelectedBookingIds() {
+function obtenerIdTurnosSeleccionados() {
   return Array.from($$("#bookingsTbody input[type='checkbox']:checked")).map(
     (cb) => cb.dataset.id,
   );
 }
 
-function renderAdminTable() {
+function renderizarTablaTurnos() {
   const tbody = $("#bookingsTbody");
-  const bookings = obtenerReservas();
+  const bookings = obtenerTurnos();
 
   const todayISO = formatDateISO(new Date());
   let view = bookings;
@@ -865,10 +864,10 @@ function renderAdminTable() {
     view = bookings.filter((b) => b.dateISO === adminDateFilter);
   } else if (adminFilter === "hoy") {
     view = bookings.filter((b) => b.dateISO === todayISO);
-  } else if (adminFilter === "pendientes") {
-    view = bookings.filter((b) => b.status === "pendiente");
-  } else if (adminFilter === "canceladas") {
-    view = bookings.filter((b) => b.status === "cancelada");
+  } else if (adminFilter === "activos") {
+    view = bookings.filter((b) => b.status === "activo");
+  } else if (adminFilter === "cancelados") {
+    view = bookings.filter((b) => b.status === "cancelado");
   } else {
     view = bookings;
   }
@@ -893,15 +892,14 @@ function renderAdminTable() {
     return;
   }
 
-  // b.ownerName, b.petName, s.title, p.name iban con escapeHtml
 
   tbody.innerHTML = view
     .map((b) => {
       const s = servicioPorId(b.serviceId);
       const p = profesionalPorId(b.profesionalId);
       const stateClass =
-        b.status === "pendiente" ? "state--pendiente" : "state--cancelada";
-
+        b.status === "activo" ? "state--activo" : "state--cancelado";      
+        const fecha = new Date(b.dateISO); // para mostrar la fecha con el formato que queremos
       return `
       <tr>
         <td class="col-check">
@@ -912,7 +910,7 @@ function renderAdminTable() {
         <td>${b.petName}</td>
         <td>${s ? s.title : "-"}</td>
         <td>${p ? p.name : "-"}</td>
-        <td>${b.dateISO}</td>
+        <td>${pad2(fecha.getDay())}/${pad2(fecha.getMonth())}/${fecha.getFullYear()}</td>
         <td>${b.time}</td>
       </tr>
     `;
@@ -921,6 +919,7 @@ function renderAdminTable() {
 }
 
 // ---------- Modal events ----------
+// Su función es cerrar el cartel de confirmación de reserva al apretar el botón de cerrar o escape
 function initModal() {
   document.addEventListener("click", (e) => {
     if (e.target.matches("[data-close-modal]")) closeModal();
@@ -939,7 +938,7 @@ function main() {
   cargarEquipo();
 
   initAuth();
-  formularioReserva();
+  formularioTurno();
   initAdmin();
   initModal();
 
@@ -969,18 +968,18 @@ if (typeof module !== "undefined") {​
     setSession,
     updateSessionLabel,
     initAuth,
-    obtenerReservas,
-    actualizarReservas,
+    obtenerTurnos,
+    actualizarTurnos,
     servicioPorId,
     profesionalPorId,
-    formularioReserva,
+    formularioTurno,
     mostrarOpcionesProfesionales,
-    isWithinOpeningHours,
-    generateTimeSlots,
-    updateAvailableTimes,
+    estaDentroHorarioAtencion,
+    generarSlotsTiempo,
+    actualizarHorariosDisponibles,
     initAdmin,
-    getSelectedBookingIds,
-    renderAdminTable,
+    obtenerIdTurnosSeleccionados,
+    renderizarTablaTurnos,
     initModal,
     main
   };​
