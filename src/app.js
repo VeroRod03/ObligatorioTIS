@@ -88,7 +88,7 @@ const profesionales = [
   },
 ];
 
-// Galería con imágenes REALES (online) + fallback
+// Galería de imágenes
 const slidesGaleria = [
   {
     label: "Consulta general",
@@ -118,18 +118,15 @@ const slidesGaleria = [
 
 // ---------- Helpers ----------
 
-/*
-estas constantes son solo para no escribir documentquerySelector constantentemente,
-le pasas el nombre de selector de css. $ busca el primer elemento que matchee, $$ busca todos
-*/
+/* Estas constantes son solo para evitar escribir documentquerySelector constantentemente,
+recibe el nombre de selector de css. $ busca el primer elemento que coincida, $$ busca todos */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
-/* read y write nos permiten manejar la informacion sin una base de datos
-write guarda en localStorage convirtiendo a JSON string
-read lee de local storage parseando json
+/* Read y write nos permiten manejar la información sin una base de datos,
+write guarda en localStorage convirtiendo a JSON string,
+read lee de local storage parseando json,
 el try catch es para que no crashee la app por las dudas */
-
 function readLS(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -142,8 +139,7 @@ function writeLS(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-/*agrega 0 a la izquierda en caso de ser necesario; como siguiendo un formato*/
-
+// Agrega 0 a la izquierda en caso de ser necesario, como siguiendo un formato
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -154,9 +150,8 @@ function formatDateISO(d) {
   return `${y}-${m}-${day}`;
 }
 
-//es para los popups, lo rellena con un mensaje, lo hace visible con el is show,
-//el clearTimeout es para cancelar el timer anterior si ya habia uno, 2600 es para que dure 2.6 segundos
-
+// Es para los popups, lo rellena con un mensaje, lo hace visible con el is-show, 
+// el clearTimeout es para cancelar el timer anterior si ya había uno, 2600 es para que dure 2.6 segundos
 function showToast(msg) {
   const toast = $("#toast");
   toast.textContent = msg;
@@ -165,8 +160,7 @@ function showToast(msg) {
   showToast._t = setTimeout(() => toast.classList.remove("is-show"), 2600);
 }
 
-//lo mismo pero para el cartel de confirmación
-
+// Lo mismo pero para el cartel de confirmación de reserva de turno
 function openModal(text) {
   const modal = $("#modal");
   $("#modalText").textContent = text;
@@ -199,8 +193,8 @@ function initNav() {
   });
 }
 
-//el id del view es view inicio, admin, o acceso. por eso funciona que oculte/muestre
-//toda esa seccion
+// El id del view es view inicio, admin, o acceso. Por eso funciona que oculte/muestre
+// toda esa seccion
 
 // ---------- Router (hash) ----------
 const ROUTES = {
@@ -229,8 +223,7 @@ function handleRoute() {
 
   showView(route.view);
 
-  //el tiemout es para esperar un poco a que carguen los estilos y todo sea visible
-
+  // El tiemout es para esperar un poco a que carguen los estilos y todo sea visible
   if (route.scrollTo) {
     setTimeout(() => {
       const el = document.getElementById(route.scrollTo);
@@ -283,8 +276,6 @@ function cargarServicios() {
 }
 
 // ---------- Render equipo ----------
-
-// el alt=p.name iba con el escapehtml
 function cargarEquipo() {
   const grid = $("#teamGrid");
   grid.innerHTML = profesionales
@@ -311,15 +302,14 @@ function cargarEquipo() {
     .join("");
 }
 
-// ---------- Galeria ----------
+// ---------- Galería ----------
 function cargarGaleria() {
   const track = $("#carouselTrack");
   const dotsWrap = $("#carouselDots");
   const prev = $("#prevSlide");
   const next = $("#nextSlide");
 
-  //primero crea los slides y le pone los labels
-
+  // Primero crea los slides y le pone los labels
   track.innerHTML = slidesGaleria
     .map(
       (s, i) => `
@@ -330,8 +320,7 @@ function cargarGaleria() {
     )
     .join("");
 
-  //aca primero pone un gradiente mientras la imagen carga, y despues crea/carga la imagen en si
-
+  // Acá primero pone un gradiente mientras la imagen carga, y después crea/carga la imagen en si
   $$(".slide").forEach((el, i) => {
     const s = slidesGaleria[i];
     el.style.backgroundImage = s.fallbackGradient;
@@ -341,8 +330,7 @@ function cargarGaleria() {
     img.src = s.img;
   });
 
-  //crea los puntos, uno por slide, y te guardas el indice
-
+  // Crea los puntos, uno por slide y guarda el índice
   dotsWrap.innerHTML = slidesGaleria
     .map((_, i) => `<span class="dot" data-dot="${i}"></span>`)
     .join("");
@@ -351,12 +339,11 @@ function cargarGaleria() {
   let index = 0;
 
   /* 
-  - primero controla que el indice siempre quede entre el rango 0 y 3
-  - lo de transorm le va restando 100% como para que el track se vaya corriendo a la izquierda, y
-  muestres la siguiente
-  - despues "apaga" todos los dots y selecciona cual encender, el del actual
+  - Primero controla que el índice siempre quede dentro del rango 0-3
+  - Lo de transorm le va restando 100% como para que el track se vaya corriendo a la izquierda y
+  muestre la siguiente
+  - Después "apaga" todos los dots y selecciona cual encender, el del actual
   */
-
   function go(i) {
     index = (i + slidesGaleria.length) % slidesGaleria.length;
     track.style.transform = `translateX(-${index * 100}%)`;
@@ -381,9 +368,8 @@ function cargarGaleria() {
 
   go(0);
 
-  // para que haya autoplay, cada 4.2 segundos van pasando y cada vez que apretemos un boton
-  // el timer se resetea, y vuelve a llamar a auto
-
+  // Para que haya autoplay, cada 4.2 segundos van pasando. Cada vez que apretemos un botón
+  // el timer se resetea y vuelve a llamar a auto
   let timer = null;
   function auto() {
     timer = setInterval(() => go(index + 1), 4200);
@@ -413,9 +399,8 @@ function setSession(sess) {
 function updateSessionLabel() {
   const sess = getSession();
 
-// se fija si hay una sesion activa (usuario logueado), en ese caso se escribe
-// el nombre del usuario, si no, se pone Invitado
-
+// Se fija si hay una sesión activa (usuario logueado), en ese caso se muestra
+// el nombre del usuario, de lo contrario muestra "Invitado"
   const label = $("#sessionLabel");
   if (label) {
     label.textContent = sess?.username
@@ -425,8 +410,7 @@ function updateSessionLabel() {
 
   const isLoggedIn = !!sess?.username;
 
-  // oculta los botones de cerrar sesión
-
+  // Oculta los botones de cerrar sesión
   const logoutBtn = $("#logoutBtn");
   if (logoutBtn) {
     logoutBtn.hidden = !isLoggedIn;
@@ -495,12 +479,10 @@ function initAuth() {
 // ---------- Turno (horarios + validación) ----------
 function obtenerTurnos() {
 
-  /* a readLS  se le pasa como parámetro "fallback" estos 2 turnos como para
-  "precargarlas" en caso de no haber ninguno. Se crean con el dia de hoy*/
-
+  /* A readLS  se le pasa como parámetro "fallback" estos 2 turnos como para
+  "precargarlas" en caso de no haber ninguno. Se crean con la fecha de hoy */
   return readLS(LS_KEYS.bookings, [
     {
-
       // crypto.randomUUID es para generar un id random 
       id: crypto.randomUUID(),
       status: "activo",
@@ -539,8 +521,7 @@ function profesionalPorId(id) {
 
 function formularioTurno() {
   // --- Cambio de servicio ---
-  /* segun el tipo de servicio seleccionado, carga los profesionales de ese tipo de servicio*/
-
+  // Según el tipo de servicio seleccionado, carga los profesionales de ese tipo de servicio
   $("#serviceType").addEventListener("change", () => {
     const serviceId = $("#serviceType").value;
     const service = servicioPorId(serviceId);
@@ -559,8 +540,8 @@ function formularioTurno() {
 
   // --- Botón limpiar ---
 
-  /* la seccion de #time tambien se resetea al resetear toda la seccion de bookingForm,
-  pero queremos que aparezca ese mensaje especificamente*/
+  /* La sección de #time también se reinicia al resetear toda la seccion de bookingForm,
+  pero queremos que aparezca ese mensaje específicamente */
   $("#resetBooking").addEventListener("click", () => {
     $("#bookingForm").reset();
     $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
@@ -596,13 +577,21 @@ function formularioTurno() {
     const service = servicioPorId(serviceId);
     const duration = service?.type === "estetica" ? 60 : 30;
 
+    // Valida que la fecha ingresada no sea anterior a la fecha actual
+    const todayISO = formatDateISO(new Date());
+
+    if (dateISO < todayISO) {
+      showToast("No es posible reservar en fechas anteriores al día de hoy.");
+      return;
+    }
+
     // Validación de horario con nueva duración
     if (!estaDentroHorarioAtencion(dateISO, time, duration)) {
       showToast("Ese horario está fuera del horario de atención.");
       return;
     }
 
-    // Verificar que el horario no esté ocupado
+    // Verifica que el horario no esté ocupado
     const bookings = obtenerTurnos();
     const ocupado = bookings.some(
       (b) =>
@@ -661,9 +650,8 @@ function formularioTurno() {
   mostrarOpcionesProfesionales("");
 }
 
-/* recibe un tipo de servicio, y busca en la lista de los profesionales los que
-coincidan con ese tipo. esos los carga en la lista de opciones*/
-
+/* Recibe un tipo de servicio y busca en la lista de los profesionales los que
+coincidan con ese tipo. Luego los carga en la lista de opciones */
 function mostrarOpcionesProfesionales(type) {
   const select = $("#profesionalId");
   const list = type
@@ -704,13 +692,12 @@ function estaDentroHorarioAtencion(dateISO, time, durationMin) {
 }
 
 /*
-  Open y close son los horarios de apertura y cierre pero en minutos
-  Con el for se van rellenando los slots disponibles segun la duración mínima (30 o 60)
-  Se elimina el incremento de la última iteración para respetar el horario de cierre 
-  Luego se pasa de nuevo a formato de horas con la división entre 60 y se utiliza el
+  - Open y close son los horarios de apertura y cierre pero en minutos
+  - Con el for se van rellenando los slots disponibles según la duración mínima (30 o 60)
+  - Se elimina el incremento de la última iteración para respetar el horario de cierre 
+  - Luego se pasa de nuevo a formato de horas con la división entre 60 y se utiliza el
   módulo entre 60 para obtener el resto 30 o 0
 */
-
 function generarSlotsTiempo(dateISO, durationMin) {
   const d = new Date(dateISO + "T00:00:00");
   const day = d.getDay();
@@ -749,9 +736,9 @@ function actualizarHorariosDisponibles() {
     return;
   }
 
-  // Obtiene todas los turnos y genera una lista (occupied) con todos los horarios de
-  // los turnos activos en la fecha seleccionada y del profesional seleccionado 
-  // (todos los horarios no disponibles)
+  /* Obtiene todos los turnos y genera una lista (occupied) con todos los horarios de los
+   turnos activos en la fecha seleccionada y del profesional seleccionado (todos los 
+   horarios no disponibles) */
   const bookings = obtenerTurnos();
   const occupied = new Set(
     bookings
@@ -783,16 +770,16 @@ function initAdmin() {
   // Marca como seleccionada la opción de filtro seleccionada
   $$(".chip[data-admin-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      // reset visual
+      // Reset visual
       $$(".chip[data-admin-filter]").forEach((b) =>
         b.classList.remove("is-active"),
       );
       $("#calendarFilterBtn").classList.remove("is-active");
 
-      // activar chip
+      // Activar chip
       btn.classList.add("is-active");
 
-      // estado
+      // Estado
       adminFilter = btn.dataset.adminFilter;
       adminDateFilter = null; // limpiar fecha
 
@@ -878,8 +865,8 @@ function renderizarTablaTurnos() {
     return keyA.localeCompare(keyB);
   });
 
-  //slice hace una copia, sort, junto con el compare, ordena los turnos por fecha
-  //la fecha y hora están guardadas como texto, las comparamos como tal, en ese formato
+  // Slice hace una copia, sort, junto con el compare, ordena los turnos por fecha,
+  // la fecha y hora están guardadas como texto, las comparamos como tal, en ese formato
 
   if (view.length === 0) {
     tbody.innerHTML = `
