@@ -1,5 +1,5 @@
-const { $ } = require("./helpers");
-const { slidesGaleria } = require("./constants");
+const { $, $$ } = require("./helpers");
+const { slidesGaleria } = require("./constantes");
 
 // ---------- Galería ----------
 function cargarGaleria() {

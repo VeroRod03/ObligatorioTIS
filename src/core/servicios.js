@@ -1,5 +1,5 @@
 const { $ } = require("./helpers");
-const { servicios } = require("./constants");
+const { servicios } = require("./constantes");
 
 function servicioPorId(id) {
   return servicios.find((s) => s.id === id);

@@ -1,5 +1,5 @@
 const { $ } = require("./helpers");
-const { profesionales } = require("./constants");
+const { profesionales } = require("./constantes");
 
 function profesionalPorId(id) {
   return profesionales.find((p) => p.id === id);

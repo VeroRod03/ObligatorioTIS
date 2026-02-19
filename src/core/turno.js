@@ -1,5 +1,5 @@
 const { LS_KEYS, servicios, profesionales } = require("./constants");
-const { readLS, writeLS, pad2 } = require("./helpers");
+const { readLS, writeLS } = require("./helpers");
 
 function servicioPorId(id) {
   return servicios.find((s) => s.id === id);
