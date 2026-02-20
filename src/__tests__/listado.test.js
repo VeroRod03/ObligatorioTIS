@@ -1,4 +1,8 @@
-// __tests__/listado.test.js
+/*utilizamos jest.mock para que las pruebas de listado.test.js no dependan del correcto funcionamiento
+de las funciones de helpers o de turno, sino que se pueda testear de manera aislada
+con jest.fn se define una funcion sin comportamiento que mas adelante podemos controlar; lo que devuelve,
+su manera de implementarse, etc.
+*/
 
 jest.mock("../core/turno", () => ({
   obtenerTurnos: jest.fn(),
@@ -30,6 +34,11 @@ const {
   initAdmin,
 } = require("../core/listado");
 
+/*
+se ejecuta el beforeEach antes de cada test para resetear y ser consistentes
+el clearAllMocks resetea el historial de llamadas de los jest.fn, si no podrían chocar
+después tenemos el html "fake" como en los demás tests
+*/
 beforeEach(() => {
   jest.clearAllMocks();
 
@@ -47,7 +56,7 @@ beforeEach(() => {
     <table><tbody id="bookingsTbody"></tbody></table>
   `;
 
-  // helpers apuntando al DOM real
+  // definiendo los helpers $, $$
   $.mockImplementation((sel) => document.querySelector(sel));
   $$.mockImplementation((sel) => document.querySelectorAll(sel));
 
@@ -69,6 +78,7 @@ beforeEach(() => {
   });
 });
 
+//verifica que devuelve los ids correctos al seleccionar los checkboxes del listado de turnos
 test("obtenerIdTurnosSeleccionados debe devolver los ids seleccionados", () => {
   document.getElementById("bookingsTbody").innerHTML = `
     <tr><td><input type="checkbox" data-id="a1" checked /></td></tr>
@@ -80,6 +90,8 @@ test("obtenerIdTurnosSeleccionados debe devolver los ids seleccionados", () => {
   expect(ids).toEqual(["a1", "c1"]);
 });
 
+//hace que obtenerTurnos devuelva un arreglo vacío, renderiza la tabla, y chequea que se muestre
+//el mensaje que corresponde (no hay turnos)
 test("renderizarTablaTurnos: si no hay turnos muestra mensaje vacío", () => {
   obtenerTurnos.mockReturnValue([]);
 
@@ -89,6 +101,8 @@ test("renderizarTablaTurnos: si no hay turnos muestra mensaje vacío", () => {
   expect(html).toContain("No hay turnos para mostrar con este filtro.");
 });
 
+//obtenerTurnos devuelve 2 turnos, uno con la fecha de hoy, y al renderizar
+// la tabla, verifica que por defecto muestra sólo ese
 test("renderizarTablaTurnos: por defecto filtra por HOY", () => {
   obtenerTurnos.mockReturnValue([
     {
@@ -120,6 +134,7 @@ test("renderizarTablaTurnos: por defecto filtra por HOY", () => {
   expect(html).not.toContain("b1");
 });
 
+//verifica que al clickear el botón "Activos" para filtrar sólo por turnos activos, se muestren esos
 test("initAdmin: chip 'activos' filtra solo status activo", () => {
   obtenerTurnos.mockReturnValue([
     {
@@ -153,6 +168,7 @@ test("initAdmin: chip 'activos' filtra solo status activo", () => {
   expect(html).not.toContain("b1");
 });
 
+//crea 2 turnos y verifica que al clickear seleccionar todos, la cantidad de checkboxes sea 2
 test("initAdmin: selectAll marca todos los checkboxes del listado", () => {
   obtenerTurnos.mockReturnValue([
     {
@@ -187,6 +203,8 @@ test("initAdmin: selectAll marca todos los checkboxes del listado", () => {
   cbs.forEach((cb) => expect(cb.checked).toBe(true));
 });
 
+//hay un turno, no se selecciona, y se clickea el botón de cancelar seleccionados. se verifica
+//que se muestre el toast de seleccionar al menos uno
 test("initAdmin: cancelar sin selección muestra toast y no actualiza", () => {
   obtenerTurnos.mockReturnValue([
     {
@@ -209,6 +227,14 @@ test("initAdmin: cancelar sin selección muestra toast y no actualiza", () => {
   expect(actualizarTurnos).not.toHaveBeenCalled();
 });
 
+/*
+se crean 2 turnos, se selecciona el checkbox de uno, y se presiona cancelar seleccionados.
+se chequea que se haya llamado la función "actualizar turnos" una vez. 
+en updated se guardan los turnos actualizados (que en realidad son todos los que estaban en la tabla)
+se verifica que el estado del seleccionado (a1) modificado a cancelado.
+se chequea que aparezca el toast con el mensaje de turnos cancelados, y se valida que no 
+se haya seleccionado el botón de seleccionar todos
+*/
 test("initAdmin: cancelar con selección marca status cancelado y llama actualizarTurnos", () => {
   obtenerTurnos.mockReturnValue([
     {
@@ -250,6 +276,11 @@ test("initAdmin: cancelar con selección marca status cancelado y llama actualiz
   expect(document.getElementById("selectAll").checked).toBe(false);
 });
 
+/*
+se crean 3 turnos, 2 con la fecha por la que se va a filtrar, y 1 con otra.
+se le asigna el valor de fecha, simulando la selección en el calendario, 
+y se verifica que se muestren los turnos que coincidan con esa fecha
+*/
 test("initAdmin: filtro por calendario muestra los turnos de esa fecha y activa el botón del calendario", () => {
   obtenerTurnos.mockReturnValue([
     // misma fecha (deberían aparecer los 2)

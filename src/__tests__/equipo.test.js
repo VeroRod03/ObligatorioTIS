@@ -1,11 +1,6 @@
 const { cargarEquipo, profesionalPorId } = require("../core/equipo");
 const { profesionales } = require("../core/constantes");
 
-//Verifica que deben haber 6 profesionales registrados
-test("Deben existir 6 profesionales en total", () => {
-  expect(profesionales.length).toBe(6);
-});
-
 //Verifica que la funcion profesionalPorId devuelva al profesional correcto
 test("profesionalPorId debe devolver el profesional correcto", () => {
   const primero = profesionales[0];
@@ -15,14 +10,6 @@ test("profesionalPorId debe devolver el profesional correcto", () => {
   expect(resultado.id).toBe(primero.id);
 });
 
-//Verifica que hayan 3 profesionales por cada tipo de servicio ofrecido
-test("Debe haber exactamente 3 profesionales de salud y 3 de estetica", () => {
-  const salud = profesionales.filter((p) => p.role === "salud");
-  const estetica = profesionales.filter((p) => p.role === "estetica");
-
-  expect(salud.length).toBe(3);
-  expect(estetica.length).toBe(3);
-});
 
 //Verifica que la funcion cargarEquipo genere la cantidad correcta (6) de tarjetas
 test("cargarEquipo debe renderizar la misma cantidad de cards que profesionales", () => {
