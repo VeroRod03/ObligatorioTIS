@@ -81,3 +81,34 @@ test("initModal debe cerrar el modal al presionar Escape", () => {
   expect(modal.classList.contains("is-open")).toBe(false);
   expect(modal.getAttribute("aria-hidden")).toBe("true");
 });
+
+
+// 2 extra para llegar al 100% de cobertura
+
+test("initModal NO debe cerrar si se hace click en otro elemento", () => {
+  initModal();
+  openModal("Test");
+
+  const otroElemento = document.createElement("div");
+  document.body.appendChild(otroElemento);
+
+  otroElemento.click();
+
+  const modal = document.getElementById("modal");
+
+  expect(modal.classList.contains("is-open")).toBe(true);
+  expect(modal.getAttribute("aria-hidden")).toBe("false");
+});
+
+test("initModal NO debe cerrar si se presiona otra tecla", () => {
+  initModal();
+  openModal("Test");
+
+  const event = new KeyboardEvent("keydown", { key: "Enter" });
+  document.dispatchEvent(event);
+
+  const modal = document.getElementById("modal");
+
+  expect(modal.classList.contains("is-open")).toBe(true);
+  expect(modal.getAttribute("aria-hidden")).toBe("false");
+});

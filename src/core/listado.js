@@ -140,7 +140,7 @@ function renderizarTablaTurnos() {
         <td>${b.petName}</td>
         <td>${s ? s.title : "-"}</td>
         <td>${p ? p.name : "-"}</td>
-        <td>${pad2(fecha.getDay())}/${pad2(fecha.getMonth())}/${fecha.getFullYear()}</td>
+        <td>${pad2(fecha.getDate())}/${pad2(fecha.getMonth()+1)}/${fecha.getFullYear()}</td>
         <td>${b.time}</td>
       </tr>
     `;

@@ -322,10 +322,10 @@
           '    <div class="avatar avatar--photo" aria-hidden="true">' +
           (p.photo
             ? '<img src="' +
-              p.photo +
-              '" alt="' +
-              p.name +
-              '" onerror="this.remove();">'
+            p.photo +
+            '" alt="' +
+            p.name +
+            '" onerror="this.remove();">'
             : p.initials) +
           "    </div>" +
           '    <div class="card__meta">' +
@@ -563,8 +563,8 @@
     if (!select) return;
     var list = type
       ? profesionales.filter(function (p) {
-          return p.role === type;
-        })
+        return p.role === type;
+      })
       : profesionales;
 
     select.innerHTML =
@@ -623,9 +623,8 @@
     var timeSelect = $("#time");
     if (!timeSelect) return;
 
-    if (!dateISO) {
-      timeSelect.innerHTML =
-        '<option value="">Elegir fecha primero...</option>';
+    if (!dateISO || !profesionalId) {
+      timeSelect.innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
       return;
     }
 
@@ -691,7 +690,7 @@
       mostrarOpcionesProfesionales((service && service.type) || "");
 
       $("#time").innerHTML =
-        '<option value="">Elegir fecha primero...</option>';
+        '<option value="">Elegir fecha y profesional primero...</option>';
       $("#date").value = "";
     });
 
@@ -702,7 +701,7 @@
       resetBtn.addEventListener("click", function () {
         form.reset();
         $("#time").innerHTML =
-          '<option value="">Elegir fecha primero...</option>';
+          '<option value="">Elegir fecha y profesional primero...</option>';
         mostrarOpcionesProfesionales("");
       });
     }
@@ -788,29 +787,29 @@
       // Mantengo tu formato original (getDay/getMonth)
       openModal(
         "Turno para " +
-          petName +
-          " (" +
-          ownerName +
-          ") — " +
-          (s ? s.title : "-") +
-          " con " +
-          (p ? p.name : "-") +
-          " el " +
-          pad2(fecha.getDay()) +
-          "/" +
-          pad2(fecha.getMonth()) +
-          "/" +
-          fecha.getFullYear() +
-          " a las " +
-          time +
-          ".",
+        petName +
+        " (" +
+        ownerName +
+        ") — " +
+        (s ? s.title : "-") +
+        " con " +
+        (p ? p.name : "-") +
+        " el " +
+        pad2(fecha.getDate()) +
+        "/" +
+        pad2(fecha.getMonth() + 1) +
+        "/" +
+        fecha.getFullYear() +
+        " a las " +
+        time +
+        ".",
       );
 
       showToast("Turno registrado ✅");
 
       form.reset();
       $("#time").innerHTML =
-        '<option value="">Elegir fecha primero...</option>';
+        '<option value="">Elegir fecha y profesional primero...</option>';
       mostrarOpcionesProfesionales("");
       renderizarTablaTurnos();
     });
@@ -904,9 +903,9 @@
           (p ? p.name : "-") +
           "</td>" +
           "  <td>" +
-          pad2(fecha.getDay()) +
+          pad2(fecha.getDate()) +
           "/" +
-          pad2(fecha.getMonth()) +
+          pad2(fecha.getMonth() + 1) +
           "/" +
           fecha.getFullYear() +
           "</td>" +
