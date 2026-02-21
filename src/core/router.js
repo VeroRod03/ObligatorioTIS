@@ -1,4 +1,6 @@
 const { $$ } = require("./helpers");
+const { isAdmin } = require("./sesion");
+const { showToast } = require("./helpers");
 
 // El id del view es view inicio, admin, o acceso. Por eso funciona que oculte/muestre
 // toda esa seccion
@@ -27,9 +29,15 @@ function handleRoute() {
   const raw = (location.hash || "#inicio").replace("#", "");
   const route = ROUTES[raw] || ROUTES["inicio"];
 
+  // PROTECCIÓN ADMIN
+  if (raw === "admin" && !isAdmin()) {
+    showToast("Acceso denegado.");
+    location.hash = "#inicio";
+    return;
+  }  
+
   showView(route.view);
 
-  // El tiemout es para esperar un poco a que carguen los estilos y todo sea visible
   if (route.scrollTo) {
     setTimeout(() => {
       const el = document.getElementById(route.scrollTo);
