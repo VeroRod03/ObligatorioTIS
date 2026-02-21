@@ -89,18 +89,10 @@ function initAuth() {
       setSession({ username: null, isAdmin: false });
       if (loginForm) loginForm.reset();
       showToast("Sesión cerrada.");
+      location.hash = "#inicio";
     });
   }
 
-  // Logout (pantalla acceso)
-  const logoutBtnAccess = $("#logoutBtnAccess");
-  if (logoutBtnAccess) {
-    logoutBtnAccess.addEventListener("click", () => {
-      setSession({ username: null, isAdmin: false });
-      if (loginForm) loginForm.reset();
-      showToast("Sesión cerrada.");
-    });
-  }
 }
 
 module.exports = {

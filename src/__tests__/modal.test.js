@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 const { openModal, closeModal, initModal } = require("../core/modal");
 
 beforeEach(() => {
@@ -13,11 +9,7 @@ beforeEach(() => {
   `;
 });
 
-
-// ===============================
-// openModal
-// ===============================
-
+// Verifica que el modal se abra correctamente y muestre el texto pasado como argumento
 test("openModal debe mostrar el modal y setear el texto correctamente", () => {
   openModal("Reserva confirmada");
 
@@ -29,11 +21,7 @@ test("openModal debe mostrar el modal y setear el texto correctamente", () => {
   expect(modal.getAttribute("aria-hidden")).toBe("false");
 });
 
-
-// ===============================
-// closeModal
-// ===============================
-
+// Verifica que el modal se cierre correctamente
 test("closeModal debe cerrar el modal correctamente", () => {
   // primero lo abrimos
   openModal("Test");
@@ -46,11 +34,7 @@ test("closeModal debe cerrar el modal correctamente", () => {
   expect(modal.getAttribute("aria-hidden")).toBe("true");
 });
 
-
-// ===============================
-// initModal - click botón cerrar
-// ===============================
-
+// Verifica que el modal se cierre correctamente al hacer click en el botón "Listo"
 test("initModal debe cerrar el modal al hacer click en botón con data-close-modal", () => {
   initModal();
   openModal("Test");
@@ -64,11 +48,7 @@ test("initModal debe cerrar el modal al hacer click en botón con data-close-mod
   expect(modal.getAttribute("aria-hidden")).toBe("true");
 });
 
-
-// ===============================
-// initModal - tecla Escape
-// ===============================
-
+// Verifica que el modal se cierre correctamente al presionar la tecla Escape
 test("initModal debe cerrar el modal al presionar Escape", () => {
   initModal();
   openModal("Test");
@@ -82,9 +62,7 @@ test("initModal debe cerrar el modal al presionar Escape", () => {
   expect(modal.getAttribute("aria-hidden")).toBe("true");
 });
 
-
-// 2 extra para llegar al 100% de cobertura
-
+// Verifica que el modal no se cierre al hacer click en otro elemento que no sea el botón de cerrar
 test("initModal NO debe cerrar si se hace click en otro elemento", () => {
   initModal();
   openModal("Test");
@@ -100,6 +78,7 @@ test("initModal NO debe cerrar si se hace click en otro elemento", () => {
   expect(modal.getAttribute("aria-hidden")).toBe("false");
 });
 
+// Verifica que el modal no se cierre al presionar otra tecla que no sea Escape
 test("initModal NO debe cerrar si se presiona otra tecla", () => {
   initModal();
   openModal("Test");

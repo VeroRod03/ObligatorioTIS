@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 jest.mock("../core/helpers", () => {
   const original = jest.requireActual("../core/helpers");
 
@@ -17,6 +13,7 @@ const {
   setSession,
   updateSessionLabel,
   initAuth,
+  isAdmin,
 } = require("../core/sesion");
 
 const { LS_KEYS } = require("../core/constantes");
@@ -29,6 +26,7 @@ beforeEach(() => {
   document.body.innerHTML = `
     <span id="sessionLabel"></span>
 
+    <button id="navTurnos"></button>
     <button id="logoutBtn"></button>
     <button id="logoutBtnAccess"></button>
 
@@ -40,11 +38,7 @@ beforeEach(() => {
   `;
 });
 
-
-// ======================================
-// getUsers
-// ======================================
-
+// Verifica que getUsers devuelva el usuario admin, que es el único precargado
 test("getUsers debe devolver usuario admin por defecto", () => {
   const users = getUsers();
 
@@ -53,11 +47,7 @@ test("getUsers debe devolver usuario admin por defecto", () => {
   expect(users[0].password).toBe("admin1234");
 });
 
-
-// ======================================
-// getSession (default)
-// ======================================
-
+// Verifica que getSession devuelva la sesión por defecto (invitado) si no hay nada en localStorage
 test("getSession debe devolver sesión por defecto si no hay nada en localStorage", () => {
   const sess = getSession();
 
@@ -65,11 +55,7 @@ test("getSession debe devolver sesión por defecto si no hay nada en localStorag
   expect(sess.isAdmin).toBe(false);
 });
 
-
-// ======================================
-// setSession
-// ======================================
-
+// Verifica que setSession guarde correctamente la sesión en localStorage
 test("setSession debe guardar sesión en localStorage", () => {
   setSession({ username: "admin", isAdmin: true });
 
@@ -79,11 +65,8 @@ test("setSession debe guardar sesión en localStorage", () => {
   expect(saved.isAdmin).toBe(true);
 });
 
-
-// ======================================
-// updateSessionLabel - usuario logueado
-// ======================================
-
+// Verifica que updateSessionLabel muestre el nombre del usuario cuando hay una sesión activa
+// y el botón de "Cerrar sesión" esté visible
 test("updateSessionLabel debe mostrar nombre cuando hay sesión activa", () => {
   localStorage.setItem(
     LS_KEYS.session,
@@ -99,11 +82,8 @@ test("updateSessionLabel debe mostrar nombre cuando hay sesión activa", () => {
   expect(logoutBtn.hidden).toBe(false);
 });
 
-
-// ======================================
-// updateSessionLabel - invitado
-// ======================================
-
+// Verifica que updateSessionLabel muestre "Invitado" cuando no hay sesión activa
+// y que el botón de "Cerrar sesión" esté oculto
 test("updateSessionLabel debe mostrar 'Invitado' si no hay sesión", () => {
   updateSessionLabel();
 
@@ -114,11 +94,8 @@ test("updateSessionLabel debe mostrar 'Invitado' si no hay sesión", () => {
   expect(logoutBtn.hidden).toBe(true);
 });
 
-
-// ======================================
-// Login correcto
-// ======================================
-
+// Verifica que al ingresar credenciales válidas en el formulario de login,
+// se inicie sesión correctamente y se muestre el toast de éxito
 test("initAuth debe iniciar sesión correctamente con credenciales válidas", () => {
   initAuth();
 
@@ -136,11 +113,8 @@ test("initAuth debe iniciar sesión correctamente con credenciales válidas", ()
   expect(showToast).toHaveBeenCalledWith("Sesión iniciada ✅");
 });
 
-
-// ======================================
-// Login incorrecto
-// ======================================
-
+// Verifica que al ingresar credenciales incorrectas en el formulario de login,
+// no se inicie sesión y se muestre el toast de error
 test("initAuth debe mostrar error si credenciales son incorrectas", () => {
   initAuth();
 
@@ -154,11 +128,8 @@ test("initAuth debe mostrar error si credenciales son incorrectas", () => {
   expect(showToast).toHaveBeenCalledWith("Credenciales incorrectas.");
 });
 
-
-// ======================================
-// Logout desde nav
-// ======================================
-
+// Verifica que al hacer click en el botón de logout, se cierre la sesión correctamente
+// y que se muestre el toast de sesión cerrada
 test("Debe cerrar sesión al hacer click en logoutBtn", () => {
   initAuth();
 
@@ -178,22 +149,62 @@ test("Debe cerrar sesión al hacer click en logoutBtn", () => {
 });
 
 
-// ======================================
-// Logout desde pantalla acceso
-// ======================================
-
-test("Debe cerrar sesión al hacer click en logoutBtnAccess", () => {
+// Verifica que al iniciar sesión se muestre la sección de turnos en la barra de navegación
+test("al iniciar sesión, navTurnos se muestra", () => {
   initAuth();
 
+  document.getElementById("logUser").value = "admin";
+  document.getElementById("logPass").value = "admin1234";
+
+  document.getElementById("loginForm").dispatchEvent(
+    new Event("submit", { bubbles: true, cancelable: true })
+  );
+
+  const navTurnos = document.getElementById("navTurnos");
+
+  expect(navTurnos.hidden).toBe(false);
+  expect(navTurnos.style.display).toBe("");
+});
+
+// Verifica que al cerrar sesión, navTurnos se oculte en la barra de navegación
+test("al cerrar sesión, navTurnos se oculta", () => {
+  initAuth();
+
+  // Simular sesión activa
   localStorage.setItem(
     LS_KEYS.session,
     JSON.stringify({ username: "admin", isAdmin: true })
   );
 
-  document.getElementById("logoutBtnAccess").click();
+  // actualizar la UI según sesión
+  updateSessionLabel();
 
-  const session = JSON.parse(localStorage.getItem(LS_KEYS.session));
+  const navTurnos = document.getElementById("navTurnos");
+  expect(navTurnos.hidden).toBe(false);
 
-  expect(session.username).toBeNull();
-  expect(showToast).toHaveBeenCalledWith("Sesión cerrada.");
+  // Hacer logout
+  document.getElementById("logoutBtn").click();
+
+  expect(navTurnos.hidden).toBe(true);
+  expect(navTurnos.style.display).toBe("none");
 });
+
+// Verifica que isAdmin funcione correctamente
+test("isAdmin debe retornar true para admin y false para invitado", () => {
+  // Sin sesión
+  localStorage.setItem(LS_KEYS.session, JSON.stringify({ username: null, isAdmin: false }));
+  expect(isAdmin()).toBe(false);
+
+  // Con sesión admin
+  localStorage.setItem(LS_KEYS.session, JSON.stringify({ username: "admin", isAdmin: true }));
+  expect(isAdmin()).toBe(true);
+});
+
+
+// test("no falla si sessionLabel y botones no existen en el DOM", () => {
+//     // DOM vacío para cubrir las ramas 'false' de los if
+//     document.body.innerHTML = ``;
+
+//     expect(() => updateSessionLabel()).not.toThrow();
+//   });
+

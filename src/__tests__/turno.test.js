@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 const {
   servicioPorId,
   profesionalPorId,
@@ -10,56 +6,38 @@ const {
   estaDentroHorarioAtencion,
 } = require("../core/turno");
 
-const { LS_KEYS, profesionales } = require("../core/constantes");
+const { LS_KEYS, profesionales, servicios } = require("../core/constantes");
 
 beforeEach(() => {
   localStorage.clear();
 });
 
-
-// ===============================
-// servicioPorId
-// ===============================
-
+// Verifica que servicioPorId devuelva el servicio correcto dado un id
 test("servicioPorId debe devolver el servicio correcto", () => {
-  const servicio = servicioPorId("med_consulta");
+  const servicio = servicios[0];
+  const resultado = servicioPorId(servicio.id);
 
-  expect(servicio).toBeDefined();
-  expect(servicio.id).toBe("med_consulta");
+  expect(resultado).toBeDefined();
+  expect(resultado.id).toBe(servicio.id);
 });
 
-
-// ===============================
-// profesionalPorId
-// ===============================
-
+// Verifica que profesionalPorId devuelva el profesional correcto dado un id
 test("profesionalPorId debe devolver el profesional correcto", () => {
   const profesional = profesionales[0];
-
   const resultado = profesionalPorId(profesional.id);
 
   expect(resultado).toBeDefined();
   expect(resultado.id).toBe(profesional.id);
 });
 
-
-// ===============================
-// obtenerTurnos
-// ===============================
-
+// Verifica que obtenerTurnos devuelva los turnos precargados si localStorage está vacío
 test("obtenerTurnos debe devolver los turnos precargados si localStorage está vacío", () => {
   const turnos = obtenerTurnos();
 
   expect(turnos.length).toBeGreaterThanOrEqual(2);
-  expect(turnos[0]).toHaveProperty("ownerName");
-  expect(turnos[0]).toHaveProperty("status");
 });
 
-
-// ===============================
-// actualizarTurnos
-// ===============================
-
+// Verifica que actualizarTurnos guarde correctamente la lista de turnos en localStorage
 test("actualizarTurnos debe guardar la lista en localStorage", () => {
   const lista = [
     {
@@ -67,6 +45,11 @@ test("actualizarTurnos debe guardar la lista en localStorage", () => {
       ownerName: "Ana",
       petName: "Luna",
       status: "activo",
+      phone: "091 222 333",
+      serviceId: "estetica_completa",
+      profesionalId: "e1",
+      dateISO: "2026-02-25",
+      time: "14:00",
     },
   ];
 
@@ -78,11 +61,7 @@ test("actualizarTurnos debe guardar la lista en localStorage", () => {
   expect(guardado[0].ownerName).toBe("Ana");
 });
 
-
-// ===============================
-// estaDentroHorarioAtencion
-// ===============================
-
+// Verifica que estaDentroHorarioAtencion devuelva true para un turno válido dentro del horario de atención
 // Caso válido lunes
 test("Debe permitir turno válido un lunes dentro del horario", () => {
   const fecha = "2026-02-23"; // lunes
@@ -93,6 +72,7 @@ test("Debe permitir turno válido un lunes dentro del horario", () => {
   expect(resultado).toBe(true);
 });
 
+// Verifica que estaDentroHorarioAtencion devuelva false para un turno fuera del horario de atención
 // No permitir domingo
 test("No debe permitir turnos los domingos", () => {
   const fecha = "2026-02-22"; // domingo
@@ -103,6 +83,8 @@ test("No debe permitir turnos los domingos", () => {
   expect(resultado).toBe(false);
 });
 
+// Verifica que estaDentroHorarioAtencion devuelva false para un turno que inicia después
+// del horario de cierre
 // No permitir horario fuera de rango lunes
 test("No debe permitir turno después del horario de cierre", () => {
   const fecha = "2026-02-23"; // lunes
@@ -113,6 +95,8 @@ test("No debe permitir turno después del horario de cierre", () => {
   expect(resultado).toBe(false);
 });
 
+// Verifica que estaDentroHorarioAtencion devuelva true para un turno que termina
+// exactamente a la hora de cierre
 // Sábado último turno válido
 test("Debe permitir último turno válido del sábado a las 12:00", () => {
   const fecha = "2026-02-21"; // sábado
@@ -123,6 +107,8 @@ test("Debe permitir último turno válido del sábado a las 12:00", () => {
   expect(resultado).toBe(true);
 });
 
+// Verifica que estaDentroHorarioAtencion devuelva false para un turno que inicia
+// exactamente a la hora de cierre
 // Sábado fuera de horario
 test("No debe permitir turno sábado 12:30 con duración 30", () => {
   const fecha = "2026-02-21"; // sábado

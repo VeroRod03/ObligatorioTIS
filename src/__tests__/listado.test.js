@@ -19,6 +19,10 @@ jest.mock("../core/helpers", () => ({
   showToast: jest.fn(),
 }));
 
+jest.mock("../core/sesion", () => ({
+  getSession: jest.fn(),
+}));
+
 const {
   obtenerTurnos,
   actualizarTurnos,
@@ -28,11 +32,15 @@ const {
 
 const { formatDateISO, pad2, $, $$, showToast } = require("../core/helpers");
 
+const { getSession } = require("../core/sesion");
+
 const {
   renderizarTablaTurnos,
   obtenerIdTurnosSeleccionados,
   initAdmin,
+  resetAdminState,
 } = require("../core/listado");
+const { LS_KEYS } = require("../core/constantes");
 
 /*
 se ejecuta el beforeEach antes de cada test para resetear y ser consistentes
@@ -56,12 +64,21 @@ beforeEach(() => {
     <table><tbody id="bookingsTbody"></tbody></table>
   `;
 
+  jest.resetModules();
+
+  // Iniciamos sesión por defecto
+  localStorage.setItem(
+    LS_KEYS.session,
+    JSON.stringify({ username: "admin", isAdmin: true })
+  );
+  getSession.mockReturnValue({ username: "admin", isAdmin: true });
+
   // definiendo los helpers $, $$
   $.mockImplementation((sel) => document.querySelector(sel));
   $$.mockImplementation((sel) => document.querySelectorAll(sel));
 
   // “hoy” fijo para que el filtro 'hoy' sea determinístico, hacemos que "hoy" siempre sea 20 de febrero
-  formatDateISO.mockReturnValue("2026-02-20"); 
+  formatDateISO.mockReturnValue("2026-02-20");
   pad2.mockImplementation((n) => String(n).padStart(2, "0"));
 
   // Para que renderizarTablaTurnos muestre nombres
@@ -77,6 +94,7 @@ beforeEach(() => {
     return null;
   });
 });
+
 
 //verifica que devuelve los ids correctos al seleccionar los checkboxes del listado de turnos
 test("obtenerIdTurnosSeleccionados debe devolver los ids seleccionados", () => {
@@ -330,4 +348,33 @@ test("initAdmin: filtro por calendario muestra los turnos de esa fecha y activa 
   expect(html).toContain("a1");
   expect(html).toContain("b1");
   expect(html).not.toContain("c1");
+});
+
+
+test("no permite inicializar admin si no hay sesión activa", () => {
+  // Simulamos que no hay sesión
+  getSession.mockReturnValue({ username: null, isAdmin: false });
+
+  // Llamamos initAdmin
+  initAdmin();
+
+  // Como no hay sesión, renderizarTablaTurnos no debería ser llamada
+  expect(document.getElementById("bookingsTbody").innerHTML).toBe("");
+});
+
+
+test("permite visualizar el listado si hay sesión activa", () => {
+  // Simulamos sesión activa
+  getSession.mockReturnValue({ username: "admin", isAdmin: true });
+
+  obtenerTurnos.mockReturnValue([
+    { id: "a1", status: "activo", ownerName: "Juanita Fernandez", petName: "A", serviceId: "med_consulta", profesionalId: "v1", dateISO: "2026-02-20", time: "10:00" },
+  ]);
+  // reseteamos los filtros
+  resetAdminState();
+  document.getElementById("chipHoy").classList.add("is-active");
+  document.getElementById("chipActivos").classList.remove("is-active");
+  document.getElementById("chipCancelados").classList.remove("is-active");
+  initAdmin();
+  expect(document.getElementById("bookingsTbody").innerHTML).toContain("Juanita Fernandez");
 });
