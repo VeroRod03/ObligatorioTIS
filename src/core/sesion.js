@@ -1,4 +1,4 @@
-const { LS_KEYS } = require("./constants");
+const { LS_KEYS } = require("./constantes");
 const { readLS, writeLS, $, showToast } = require("./helpers");
 
 function getUsers() {

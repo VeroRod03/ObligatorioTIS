@@ -1,4 +1,3 @@
-
 jest.mock("../core/helpers", () => ({
   $: jest.fn(),
   pad2: jest.fn(),
