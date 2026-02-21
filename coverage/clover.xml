@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1771716730957" clover="3.2.0">
-  <project timestamp="1771716730957" name="All files">
-    <metrics statements="326" coveredstatements="320" conditionals="127" coveredconditionals="109" methods="85" coveredmethods="80" elements="538" coveredelements="509" complexity="0" loc="326" ncloc="326" packages="1" files="10" classes="10"/>
+<coverage generated="1771717796039" clover="3.2.0">
+  <project timestamp="1771717796039" name="All files">
+    <metrics statements="337" coveredstatements="331" conditionals="127" coveredconditionals="109" methods="89" coveredmethods="84" elements="553" coveredelements="524" complexity="0" loc="337" ncloc="337" packages="1" files="11" classes="11"/>
     <file name="constantes.js" path="C:\Users\Agustina\Desktop\Facultad\Taller de ingeniería de software\GitObligatorio\ObligatorioTIS\src\core\constantes.js">
       <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <line num="1" count="7" type="stmt"/>
@@ -163,8 +163,8 @@
     </file>
     <file name="helpers.js" path="C:\Users\Agustina\Desktop\Facultad\Taller de ingeniería de software\GitObligatorio\ObligatorioTIS\src\core\helpers.js">
       <metrics statements="18" coveredstatements="18" conditionals="2" coveredconditionals="2" methods="8" coveredmethods="8"/>
-      <line num="5" count="116" type="stmt"/>
-      <line num="6" count="11" type="stmt"/>
+      <line num="5" count="124" type="stmt"/>
+      <line num="6" count="14" type="stmt"/>
       <line num="13" count="24" type="stmt"/>
       <line num="14" count="24" type="stmt"/>
       <line num="15" count="24" type="cond" truecount="2" falsecount="0"/>
@@ -180,7 +180,7 @@
       <line num="41" count="3" type="stmt"/>
       <line num="42" count="3" type="stmt"/>
       <line num="43" count="3" type="stmt"/>
-      <line num="46" count="7" type="stmt"/>
+      <line num="46" count="8" type="stmt"/>
     </file>
     <file name="listado.js" path="C:\Users\Agustina\Desktop\Facultad\Taller de ingeniería de software\GitObligatorio\ObligatorioTIS\src\core\listado.js">
       <metrics statements="74" coveredstatements="70" conditionals="24" coveredconditionals="17" methods="21" coveredmethods="19"/>
@@ -274,6 +274,20 @@
       <line num="22" count="4" type="stmt"/>
       <line num="23" count="6" type="cond" truecount="2" falsecount="0"/>
       <line num="27" count="1" type="stmt"/>
+    </file>
+    <file name="nav.js" path="C:\Users\Agustina\Desktop\Facultad\Taller de ingeniería de software\GitObligatorio\ObligatorioTIS\src\core\nav.js">
+      <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="5" count="3" type="stmt"/>
+      <line num="6" count="3" type="stmt"/>
+      <line num="10" count="3" type="stmt"/>
+      <line num="11" count="4" type="stmt"/>
+      <line num="12" count="4" type="stmt"/>
+      <line num="16" count="3" type="stmt"/>
+      <line num="17" count="6" type="stmt"/>
+      <line num="18" count="1" type="stmt"/>
+      <line num="19" count="1" type="stmt"/>
+      <line num="24" count="1" type="stmt"/>
     </file>
     <file name="servicios.js" path="C:\Users\Agustina\Desktop\Facultad\Taller de ingeniería de software\GitObligatorio\ObligatorioTIS\src\core\servicios.js">
       <metrics statements="9" coveredstatements="9" conditionals="8" coveredconditionals="8" methods="4" coveredmethods="4"/>
