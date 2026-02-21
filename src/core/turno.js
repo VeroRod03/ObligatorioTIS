@@ -1,4 +1,4 @@
-const { LS_KEYS, servicios, profesionales } = require("./constants");
+const { LS_KEYS, servicios, profesionales } = require("./constantes");
 const { readLS, writeLS, formatDateISO } = require("./helpers");
 
 function servicioPorId(id) {

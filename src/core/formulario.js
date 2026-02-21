@@ -5,7 +5,7 @@ const {
   obtenerTurnos,
   actualizarTurnos,
 } = require("./turno");
-const { profesionales } = require("./data");
+const { profesionales } = require("./constantes");
 
 /* Recibe un tipo de servicio y busca en la lista de los profesionales los que
 coincidan con ese tipo. Luego los carga en la lista de opciones */
@@ -158,7 +158,8 @@ function formularioTurno() {
     // Es una validación extra para asegurarse que no se pueda ingresar un horario ocupado
     if (ocupado) {
       showToast("Ese horario ya está ocupado para ese profesional.");
-      actualizarHorariosDisponibles();
+     //actualizarHorariosDisponibles();
+     module.exports.actualizarHorariosDisponibles();
       return;
     }
 
