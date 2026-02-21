@@ -4,8 +4,10 @@ const {
   profesionalPorId,
   obtenerTurnos,
   actualizarTurnos,
+  estaDentroHorarioAtencion,
 } = require("./turno");
-const { profesionales } = require("./data");
+const { renderizarTablaTurnos } = require("./listado");
+const { profesionales } = require("./constantes");
 
 /* Recibe un tipo de servicio y busca en la lista de los profesionales los que
 coincidan con ese tipo. Luego los carga en la lista de opciones */
@@ -32,8 +34,8 @@ function actualizarHorariosDisponibles() {
   const profesionalId = $("#profesionalId").value;
   const timeSelect = $("#time");
 
-  if (!dateISO) {
-    timeSelect.innerHTML = `<option value="">Elegir fecha primero...</option>`;
+  if (!dateISO || !profesionalId) {
+    timeSelect.innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
     return;
   }
 
@@ -84,7 +86,7 @@ function formularioTurno() {
     mostrarOpcionesProfesionales(service?.type || "");
 
     // Resetea fecha y horarios
-    $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
+    $("#time").innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
     $("#date").value = "";
   });
 
@@ -98,7 +100,7 @@ function formularioTurno() {
   pero queremos que aparezca ese mensaje específicamente */
   $("#resetBooking").addEventListener("click", () => {
     $("#bookingForm").reset();
-    $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
+    $("#time").innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
     mostrarOpcionesProfesionales("");
   });
 
@@ -158,7 +160,8 @@ function formularioTurno() {
     // Es una validación extra para asegurarse que no se pueda ingresar un horario ocupado
     if (ocupado) {
       showToast("Ese horario ya está ocupado para ese profesional.");
-      actualizarHorariosDisponibles();
+     //actualizarHorariosDisponibles();
+     module.exports.actualizarHorariosDisponibles();
       return;
     }
 
@@ -185,14 +188,14 @@ function formularioTurno() {
     const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
 
     openModal(
-      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${pad2(fecha.getDay())}/${pad2(fecha.getMonth())}/${fecha.getFullYear()} a las ${time}.`,
+      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${pad2(fecha.getDate())}/${pad2(fecha.getMonth()+1)}/${fecha.getFullYear()} a las ${time}.`,
     );
 
     showToast("Turno registrado ✅");
 
     // Reset del formulario
     $("#bookingForm").reset();
-    $("#time").innerHTML = `<option value="">Elegir fecha primero...</option>`;
+    $("#time").innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
     mostrarOpcionesProfesionales("");
     renderizarTablaTurnos();
   });

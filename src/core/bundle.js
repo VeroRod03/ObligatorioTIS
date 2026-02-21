@@ -234,6 +234,7 @@
     acceso: { view: "view-acceso" },
   };
 
+
   function showView(viewId) {
     var views = $$(".view");
     for (var i = 0; i < views.length; i++) {
@@ -245,12 +246,21 @@
   }
 
   function handleRoute() {
-    var raw = (location.hash || "#inicio").replace("#", "");
-    var route = ROUTES[raw] || ROUTES["inicio"];
+    const raw = (location.hash || "#inicio").replace("#", "");
+    const route = ROUTES[raw] || ROUTES["inicio"];
+
+    // 🔐 PROTECCIÓN ADMIN
+    if (raw === "admin" && !isAdmin()) {
+      showToast("Acceso denegado.");
+      location.hash = "#inicio";
+      return;
+    }
+
     showView(route.view);
+
     if (route.scrollTo) {
-      setTimeout(function () {
-        var el = document.getElementById(route.scrollTo);
+      setTimeout(() => {
+        const el = document.getElementById(route.scrollTo);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 60);
     }
@@ -322,10 +332,10 @@
           '    <div class="avatar avatar--photo" aria-hidden="true">' +
           (p.photo
             ? '<img src="' +
-              p.photo +
-              '" alt="' +
-              p.name +
-              '" onerror="this.remove();">'
+            p.photo +
+            '" alt="' +
+            p.name +
+            '" onerror="this.remove();">'
             : p.initials) +
           "    </div>" +
           '    <div class="card__meta">' +
@@ -439,6 +449,11 @@
   }
 
   // ---------- Acceso (Login) ----------
+  function isAdmin() {
+    const sess = getSession();
+    return !!sess?.username && !!sess?.isAdmin;
+  }
+
   function getUsers() {
     return readLS(LS_KEYS.users, [
       { username: "admin", password: "admin1234", isAdmin: true },
@@ -460,6 +475,12 @@
         sess && sess.username ? String(sess.username) : "Invitado";
     }
     var isLoggedIn = !!(sess && sess.username);
+
+    var navTurnos = $("#navTurnos");
+    if (navTurnos) {
+      navTurnos.hidden = !isLoggedIn;
+      navTurnos.style.display = isLoggedIn ? "" : "none";
+    }
     var logoutBtn = $("#logoutBtn");
     if (logoutBtn) {
       logoutBtn.hidden = !isLoggedIn;
@@ -563,8 +584,8 @@
     if (!select) return;
     var list = type
       ? profesionales.filter(function (p) {
-          return p.role === type;
-        })
+        return p.role === type;
+      })
       : profesionales;
 
     select.innerHTML =
@@ -623,9 +644,8 @@
     var timeSelect = $("#time");
     if (!timeSelect) return;
 
-    if (!dateISO) {
-      timeSelect.innerHTML =
-        '<option value="">Elegir fecha primero...</option>';
+    if (!dateISO || !profesionalId) {
+      timeSelect.innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
       return;
     }
 
@@ -691,7 +711,7 @@
       mostrarOpcionesProfesionales((service && service.type) || "");
 
       $("#time").innerHTML =
-        '<option value="">Elegir fecha primero...</option>';
+        '<option value="">Elegir fecha y profesional primero...</option>';
       $("#date").value = "";
     });
 
@@ -702,7 +722,7 @@
       resetBtn.addEventListener("click", function () {
         form.reset();
         $("#time").innerHTML =
-          '<option value="">Elegir fecha primero...</option>';
+          '<option value="">Elegir fecha y profesional primero...</option>';
         mostrarOpcionesProfesionales("");
       });
     }
@@ -783,34 +803,34 @@
 
       var s = servicioPorId(serviceId);
       var p = profesionalPorId(profesionalId);
-      var fecha = new Date(dateISO);
+      var fecha = new Date(dateISO + "T00:00:00");
 
       // Mantengo tu formato original (getDay/getMonth)
       openModal(
         "Turno para " +
-          petName +
-          " (" +
-          ownerName +
-          ") — " +
-          (s ? s.title : "-") +
-          " con " +
-          (p ? p.name : "-") +
-          " el " +
-          pad2(fecha.getDay()) +
-          "/" +
-          pad2(fecha.getMonth()) +
-          "/" +
-          fecha.getFullYear() +
-          " a las " +
-          time +
-          ".",
+        petName +
+        " (" +
+        ownerName +
+        ") — " +
+        (s ? s.title : "-") +
+        " con " +
+        (p ? p.name : "-") +
+        " el " +
+        pad2(fecha.getDate()) +
+        "/" +
+        pad2(fecha.getMonth() + 1) +
+        "/" +
+        fecha.getFullYear() +
+        " a las " +
+        time +
+        ".",
       );
 
       showToast("Turno registrado ✅");
 
       form.reset();
       $("#time").innerHTML =
-        '<option value="">Elegir fecha primero...</option>';
+        '<option value="">Elegir fecha y profesional primero...</option>';
       mostrarOpcionesProfesionales("");
       renderizarTablaTurnos();
     });
@@ -878,7 +898,7 @@
       .map(function (b) {
         var s = servicioPorId(b.serviceId);
         var p = profesionalPorId(b.profesionalId);
-        var fecha = new Date(b.dateISO);
+        var fecha = new Date(b.dateISO + "T00:00:00");
         var stateClass =
           b.status === "activo" ? "state--activo" : "state--cancelado";
         return (
@@ -904,9 +924,9 @@
           (p ? p.name : "-") +
           "</td>" +
           "  <td>" +
-          pad2(fecha.getDay()) +
+          pad2(fecha.getDate()) +
           "/" +
-          pad2(fecha.getMonth()) +
+          pad2(fecha.getMonth() + 1) +
           "/" +
           fecha.getFullYear() +
           "</td>" +
@@ -1011,6 +1031,14 @@
     });
   }
 
+  // ---------- Control de acceso admin ----------
+  function controlarAccesoAdmin() {
+    const adminSection = document.getElementById("adminSection");
+    if (!adminSection) return;
+  
+    adminSection.style.display = isAdmin() ? "" : "none";
+  }
+
   // ---------- Main ----------
   function main() {
     initNav();
@@ -1018,6 +1046,7 @@
     cargarServicios();
     cargarEquipo();
     initAuth();
+    controlarAccesoAdmin();
     formularioTurno();
     initAdmin();
     initModal();

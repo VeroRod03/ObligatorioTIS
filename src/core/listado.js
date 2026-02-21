@@ -5,12 +5,23 @@ const {
   profesionalPorId,
 } = require("./turno");
 const { formatDateISO, pad2, $, $$, showToast } = require("./helpers");
+const { getSession } = require("./sesion");
 
 // ---------- Admin (tabla + filtros + cancelar) ----------
 let adminFilter = "hoy";
 let adminDateFilter = null; // YYYY-MM-DD o null
 
+function resetAdminState() {
+  adminFilter = "hoy";
+  adminDateFilter = null;
+}
+
 function initAdmin() {
+  const sess = getSession();
+  if (!sess?.username) {
+    // No hay sesión, no inicializar nada
+    return;
+  }
   // Marca como seleccionada la opción de filtro seleccionada
   $$(".chip[data-admin-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -140,7 +151,7 @@ function renderizarTablaTurnos() {
         <td>${b.petName}</td>
         <td>${s ? s.title : "-"}</td>
         <td>${p ? p.name : "-"}</td>
-        <td>${pad2(fecha.getDay())}/${pad2(fecha.getMonth())}/${fecha.getFullYear()}</td>
+        <td>${pad2(fecha.getDate())}/${pad2(fecha.getMonth() + 1)}/${fecha.getFullYear()}</td>
         <td>${b.time}</td>
       </tr>
     `;
@@ -152,4 +163,5 @@ module.exports = {
   renderizarTablaTurnos,
   obtenerIdTurnosSeleccionados,
   initAdmin,
+  resetAdminState,
 };

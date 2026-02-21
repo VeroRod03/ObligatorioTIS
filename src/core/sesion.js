@@ -1,5 +1,10 @@
-const { LS_KEYS } = require("./constants");
+const { LS_KEYS } = require("./constantes");
 const { readLS, writeLS, $, showToast } = require("./helpers");
+
+function isAdmin() {
+  const sess = getSession();
+  return !!sess?.username && !!sess?.isAdmin;
+}
 
 function getUsers() {
   return readLS(LS_KEYS.users, [
@@ -17,15 +22,20 @@ function setSession(sess) {
 
 function updateSessionLabel() {
   const sess = getSession();
-
   // Se fija si hay una sesión activa (usuario logueado), en ese caso se muestra
   // el nombre del usuario, de lo contrario muestra "Invitado"
   const label = $("#sessionLabel");
   if (label) {
     label.textContent = sess?.username ? `${sess.username}` : "Invitado";
   }
-
   const isLoggedIn = !!sess?.username;
+
+  // Ocultar/mostrar botón Turnos según sesión
+  const navTurnos = $("#navTurnos");
+  if (navTurnos) {
+    navTurnos.hidden = !isLoggedIn;
+    navTurnos.style.display = isLoggedIn ? "" : "none";
+  }
 
   // Oculta los botones de cerrar sesión
   const logoutBtn = $("#logoutBtn");
@@ -79,18 +89,10 @@ function initAuth() {
       setSession({ username: null, isAdmin: false });
       if (loginForm) loginForm.reset();
       showToast("Sesión cerrada.");
+      location.hash = "#inicio";
     });
   }
 
-  // Logout (pantalla acceso)
-  const logoutBtnAccess = $("#logoutBtnAccess");
-  if (logoutBtnAccess) {
-    logoutBtnAccess.addEventListener("click", () => {
-      setSession({ username: null, isAdmin: false });
-      if (loginForm) loginForm.reset();
-      showToast("Sesión cerrada.");
-    });
-  }
 }
 
 module.exports = {
@@ -99,4 +101,5 @@ module.exports = {
   setSession,
   updateSessionLabel,
   initAuth,
+  isAdmin
 };

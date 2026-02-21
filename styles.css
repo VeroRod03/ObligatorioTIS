@@ -162,6 +162,7 @@ main {
 .nav__link:hover {
   background: rgba(122, 166, 255, 0.12);
   transform: translateY(-1px);
+  cursor: pointer;
 }
 .nav__cta {
   background: rgba(167, 243, 208, 0.35);

@@ -13,6 +13,26 @@ if (typeof window !== "undefined") {
   window.renderizarTablaTurnos = renderizarTablaTurnos;
 }
 
+const { getSession, isAdmin } = require("./sesion");
+const { showToast } = require("./helpers");
+
+function controlarAccesoAdmin() {
+  const adminSection = document.getElementById("adminSection");
+  if (!adminSection) return;
+
+  adminSection.style.display = isAdmin() ? "" : "none";
+}
+
+window.addEventListener("hashchange", () => {
+  if (location.hash === "#admin" && !isAdmin()) {
+    showToast("Acceso denegado.");
+    location.hash = "#inicio";
+  }
+
+  controlarAccesoAdmin();
+});
+
+
 // ---------- Init ----------
 function main() {
   initNav();
@@ -22,6 +42,7 @@ function main() {
   cargarEquipo();
 
   initAuth();
+  controlarAccesoAdmin();
   formularioTurno();
   initAdmin();
   initModal();
