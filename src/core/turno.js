@@ -15,8 +15,17 @@ function actualizarTurnos(list) {
 
 // ---------- Turno (horarios + validación) ----------
 function obtenerTurnos() {
-  /* A readLS  se le pasa como parámetro "fallback" estos 2 turnos como para
-  "precargarlas" en caso de no haber ninguno. Se crean con la fecha de hoy */
+
+  const hoy = new Date();
+
+  // Si hoy es domingo, se setea la fecha a lunes para que los turnos "precargados"
+  // no queden con fecha de domingo (día no hábil)
+  if (hoy.getDay() === 0) {
+    hoy.setDate(hoy.getDate() + 1); // pasa a lunes
+  }
+
+  // A readLS  se le pasa como parámetro "fallback" estos 2 turnos como para
+  // "precargarlas" en caso de no haber ninguno. Se crean con la fecha de hoy
   return readLS(LS_KEYS.bookings, [
     {
       // crypto.randomUUID es para generar un id random
@@ -27,7 +36,7 @@ function obtenerTurnos() {
       phone: "091 111 111",
       serviceId: "med_consulta",
       profesionalId: "v1",
-      dateISO: formatDateISO(new Date()),
+      dateISO: formatDateISO(hoy),
       time: "10:00",
     },
     {
@@ -38,7 +47,7 @@ function obtenerTurnos() {
       phone: "091 222 333",
       serviceId: "estetica_completa",
       profesionalId: "e1",
-      dateISO: formatDateISO(new Date()),
+      dateISO: formatDateISO(hoy),
       time: "14:00",
     },
   ]);

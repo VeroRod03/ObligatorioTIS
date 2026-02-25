@@ -543,6 +543,12 @@
 
   // ---------- Turnos (persistencia) ----------
   function obtenerTurnos() {
+    var hoy = new Date();
+
+    if (hoy.getDay() === 0) {
+      hoy.setDate(hoy.getDate() + 1); // pasa a lunes
+    }
+
     return readLS(LS_KEYS.bookings, [
       {
         id: crypto.randomUUID(),
@@ -552,7 +558,7 @@
         phone: "091 111 111",
         serviceId: "med_consulta",
         profesionalId: "v1",
-        dateISO: formatDateISO(new Date()),
+        dateISO: formatDateISO(hoy),
         time: "10:00",
       },
       {
@@ -563,7 +569,7 @@
         phone: "091 222 333",
         serviceId: "estetica_completa",
         profesionalId: "e1",
-        dateISO: formatDateISO(new Date()),
+        dateISO: formatDateISO(hoy),
         time: "14:00",
       },
     ]);
