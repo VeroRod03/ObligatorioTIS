@@ -30,24 +30,25 @@ function updateSessionLabel() {
   }
   const isLoggedIn = !!sess?.username;
 
-  // Ocultar/mostrar botón Turnos según sesión
+  // Ocultar/ mostrar botón Turnos según sesión
   const navTurnos = $("#navTurnos");
   if (navTurnos) {
     navTurnos.hidden = !isLoggedIn;
     navTurnos.style.display = isLoggedIn ? "" : "none";
   }
 
-  // Oculta los botones de cerrar sesión
+  // Ocultar/mostrar botón Portal Admin según sesión
+  const navAcceso = $("#navAcceso");
+  if (navAcceso) {
+    navAcceso.hidden = isLoggedIn;
+    navAcceso.style.display = isLoggedIn ? "none" : "";
+  }  
+
+  // Ocultar/ mostrar botón de cerrar sesión
   const logoutBtn = $("#logoutBtn");
   if (logoutBtn) {
     logoutBtn.hidden = !isLoggedIn;
     logoutBtn.style.display = isLoggedIn ? "" : "none";
-  }
-
-  const logoutBtnAccess = $("#logoutBtnAccess");
-  if (logoutBtnAccess) {
-    logoutBtnAccess.hidden = !isLoggedIn;
-    logoutBtnAccess.style.display = isLoggedIn ? "" : "none";
   }
 }
 
@@ -89,6 +90,7 @@ function initAuth() {
       setSession({ username: null, isAdmin: false });
       if (loginForm) loginForm.reset();
       showToast("Sesión cerrada.");
+      // Redirige a inicio después de cerrar sesión
       location.hash = "#inicio";
     });
   }

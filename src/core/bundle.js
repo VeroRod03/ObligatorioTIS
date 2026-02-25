@@ -481,15 +481,16 @@
       navTurnos.hidden = !isLoggedIn;
       navTurnos.style.display = isLoggedIn ? "" : "none";
     }
+
+    var navAcceso = $("#navAcceso");
+    if (navAcceso) {
+      navAcceso.hidden = isLoggedIn;
+      navAcceso.style.display = isLoggedIn ? "none" : "";
+    }
     var logoutBtn = $("#logoutBtn");
     if (logoutBtn) {
       logoutBtn.hidden = !isLoggedIn;
       logoutBtn.style.display = isLoggedIn ? "" : "none";
-    }
-    var logoutBtnAccess = $("#logoutBtnAccess");
-    if (logoutBtnAccess) {
-      logoutBtnAccess.hidden = !isLoggedIn;
-      logoutBtnAccess.style.display = isLoggedIn ? "" : "none";
     }
   }
 
@@ -534,15 +535,8 @@
         setSession({ username: null, isAdmin: false });
         if (loginForm) loginForm.reset();
         showToast("Sesión cerrada.");
-      });
-    }
-
-    var logoutBtnAccess = $("#logoutBtnAccess");
-    if (logoutBtnAccess) {
-      logoutBtnAccess.addEventListener("click", function () {
-        setSession({ username: null, isAdmin: false });
-        if (loginForm) loginForm.reset();
-        showToast("Sesión cerrada.");
+        // Redirige a inicio después de cerrar sesión
+        location.hash = "#inicio";
       });
     }
   }
@@ -1035,7 +1029,7 @@
   function controlarAccesoAdmin() {
     const adminSection = document.getElementById("adminSection");
     if (!adminSection) return;
-  
+
     adminSection.style.display = isAdmin() ? "" : "none";
   }
 
