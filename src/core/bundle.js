@@ -525,7 +525,7 @@
         setSession({ username: found.username, isAdmin: !!found.isAdmin });
         loginForm.reset();
         showToast("Sesión iniciada ✅");
-        location.hash = "#inicio";
+        location.hash = "#admin";
       });
     }
 
@@ -804,26 +804,17 @@
       var s = servicioPorId(serviceId);
       var p = profesionalPorId(profesionalId);
       var fecha = new Date(dateISO + "T00:00:00");
+      var fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
+        fecha.getMonth() + 1
+      )}/${fecha.getFullYear()}`;
 
-      // Mantengo tu formato original (getDay/getMonth)
       openModal(
-        "Turno para " +
-        petName +
-        " (" +
-        ownerName +
-        ") — " +
-        (s ? s.title : "-") +
-        " con " +
-        (p ? p.name : "-") +
-        " el " +
-        pad2(fecha.getDate()) +
-        "/" +
-        pad2(fecha.getMonth() + 1) +
-        "/" +
-        fecha.getFullYear() +
-        " a las " +
-        time +
-        ".",
+        `Mascota: ${petName}
+        Titular: ${ownerName}
+        Servicio: ${s.title}
+        Profesional: ${p.name}
+        Fecha: ${fechaFormateada}
+        Hora: ${time}`,
       );
 
       showToast("Turno registrado ✅");
