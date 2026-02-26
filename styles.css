@@ -385,8 +385,8 @@ main {
   gap: 12px;
 }
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   overflow: hidden;
   background: #f3f8ff;
