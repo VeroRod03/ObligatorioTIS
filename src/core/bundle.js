@@ -987,6 +987,7 @@
           return b;
         });
 
+        actualizarHorariosDisponibles();
         actualizarTurnos(bookings);
         showToast("Turnos cancelados.");
         renderizarTablaTurnos();

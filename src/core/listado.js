@@ -6,6 +6,7 @@ const {
 } = require("./turno");
 const { formatDateISO, pad2, $, $$, showToast } = require("./helpers");
 const { getSession } = require("./sesion");
+const { actualizarHorariosDisponibles } = require("./formulario");
 
 // ---------- Admin (tabla + filtros + cancelar) ----------
 let adminFilter = "hoy";
@@ -61,6 +62,7 @@ function initAdmin() {
     const bookings = obtenerTurnos().map((b) =>
       ids.includes(b.id) ? { ...b, status: "cancelado" } : b,
     );
+    actualizarHorariosDisponibles();
     actualizarTurnos(bookings);
     showToast("Turnos cancelados.");
     renderizarTablaTurnos();
