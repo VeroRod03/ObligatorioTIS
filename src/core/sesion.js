@@ -79,7 +79,7 @@ function initAuth() {
       // Limpiar campos del login luego de iniciar sesión
       loginForm.reset();
       showToast("Sesión iniciada ✅");
-      location.hash = "#inicio";
+      location.hash = "#admin"; // Redirige al panel admin después de iniciar sesión
     });
   }
 

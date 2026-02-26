@@ -160,8 +160,8 @@ function formularioTurno() {
     // Es una validación extra para asegurarse que no se pueda ingresar un horario ocupado
     if (ocupado) {
       showToast("Ese horario ya está ocupado para ese profesional.");
-     //actualizarHorariosDisponibles();
-     module.exports.actualizarHorariosDisponibles();
+      //actualizarHorariosDisponibles();
+      module.exports.actualizarHorariosDisponibles();
       return;
     }
 
@@ -186,9 +186,17 @@ function formularioTurno() {
     const p = profesionalPorId(profesionalId);
 
     const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
+    const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
+      fecha.getMonth() + 1
+    )}/${fecha.getFullYear()}`;
 
     openModal(
-      `Turno para ${petName} (${ownerName}) — ${s.title} con ${p.name} el ${pad2(fecha.getDate())}/${pad2(fecha.getMonth()+1)}/${fecha.getFullYear()} a las ${time}.`,
+      `Mascota: ${petName}
+      Titular: ${ownerName}
+      Servicio: ${s.title}
+      Profesional: ${p.name}
+      Fecha: ${fechaFormateada}
+      Hora: ${time}`,
     );
 
     showToast("Turno registrado ✅");
