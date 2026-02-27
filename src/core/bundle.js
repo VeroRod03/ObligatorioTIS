@@ -283,7 +283,9 @@
             : "Servicio de estética y baño";
 
         return (
-          '<article class="card" role="article">' +
+          '<article class="card card--clickable" data-id="' +
+          s.id +
+          '" role="article">' +
           '  <div class="card__top">' +
           '    <div class="avatar">' +
           '      <img src="' +
@@ -336,9 +338,7 @@
         serviceSelect.dispatchEvent(new Event("change"));
 
         //scroll suave al formulario
-        document
-          .querySelector("#turno")
-          .scrollIntoView({ behavior: "smooth" });
+        document.querySelector("#turno").scrollIntoView({ behavior: "smooth" });
       });
     });
   }

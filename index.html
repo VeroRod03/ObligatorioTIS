@@ -1,432 +1,529 @@
 <!doctype html>
 <html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Veterinaria Huellas</title>
+    <meta
+      name="description"
+      content="Veterinaria Huellas: servicios, equipo profesional, turnos online y ubicación."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Veterinaria Huellas | Turnos online</title>
-  <meta name="description" content="Veterinaria Huellas: servicios, equipo profesional, turnos online y ubicación." />
-  <link rel="stylesheet" href="styles.css" />
-</head>
+  <body>
+    <!-- Header / Nav -->
+    <header class="header" id="top">
+      <div class="container header__content">
+        <a class="brand" href="#inicio" aria-label="Ir a Inicio">
+          <span class="brand__logo" aria-hidden="true">🐾</span>
+          <span class="brand__text">
+            <strong>Veterinaria Huellas</strong>
+            <small>Cuidamos la salud de tu mascota</small>
+          </span>
+        </a>
 
-<body>
-  <!-- Header / Nav -->
-  <header class="header" id="top">
-    <div class="container header__content">
-      <a class="brand" href="#inicio" aria-label="Ir a Inicio">
-        <span class="brand__logo" aria-hidden="true">🐾</span>
-        <span class="brand__text">
-          <strong>Veterinaria Huellas</strong>
-          <small>Cuidamos la salud de tu mascota</small>
-        </span>
-      </a>
+        <button
+          class="nav__toggle"
+          id="navToggle"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
 
-      <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+        <nav class="nav" id="navMenu" aria-label="Menú principal">
+          <!-- INICIO (página principal) -->
+          <a class="nav__link" href="#inicio">Inicio</a>
+          <a class="nav__link" href="#servicios">Servicios</a>
+          <a class="nav__link" href="#equipo">Equipo</a>
+          <a class="nav__link" href="#ubicacion">Ubicación</a>
 
-      <nav class="nav" id="navMenu" aria-label="Menú principal">
-        <!-- INICIO (página principal) -->
-        <a class="nav__link" href="#inicio">Inicio</a>
-        <a class="nav__link" href="#servicios">Servicios</a>
-        <a class="nav__link" href="#equipo">Equipo</a>
-        <a class="nav__link" href="#ubicacion">Ubicación</a>
+          <a class="nav__link nav__cta" href="#turno">Reservar turno</a>
+          <a class="nav__link" id="navTurnos" href="#admin">Turnos</a>
+          <a class="nav__link" id="navAcceso" href="#acceso">Portal Admin</a>
+          <a class="nav__link nav__logout" id="logoutBtn">Cerrar sesión</a>
+        </nav>
+      </div>
+    </header>
 
-        <a class="nav__link nav__cta" href="#turno">Reservar turno</a>
-        <a class="nav__link" id="navTurnos" href="#admin">Turnos</a>
-        <a class="nav__link" id="navAcceso" href="#acceso">Portal Admin</a>
-        <a class="nav__link nav__logout" id="logoutBtn">Cerrar sesión</a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="app">
-    <!-- ==========================================================
+    <main id="app">
+      <!-- ==========================================================
          VIEW: INICIO (PÁGINA PRINCIPAL)
          ========================================================== -->
-    <div id="view-inicio" class="view is-active">
-      <!--Banner full-width (ocupa toda la pantalla horizontalmente) -->
-      <section class="banner" id="inicio" aria-label="Banner Veterinaria Huellas">
-        <div class="banner__media" style="
+      <div id="view-inicio" class="view is-active">
+        <!--Banner full-width (ocupa toda la pantalla horizontalmente) -->
+        <section
+          class="banner"
+          id="inicio"
+          aria-label="Banner Veterinaria Huellas"
+        >
+          <div
+            class="banner__media"
+            style="
               background-image: url(&quot;https://images.unsplash.com/photo-1629909614456-6b1c5c94cecc?q=80&w=1194&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&quot;);
-            " role="img" aria-label="Interior de Veterinaria Huellas">
-          <div class="banner__overlay">
-            <div class="container banner__content">
-              <h1 class="soft">Bienvenidos a Huellas</h1>
-              <p class="lead">
-                Atención especializada en <strong>perros y gatos</strong>.
-                Reservá tu turno online para <strong>salud</strong> o
-                <strong>estética/baño</strong>.
-              </p>
-              <div class="hero__actions">
-                <a class="btn btn--primary" href="#turno"><strong>Reservar turno</strong></a>
+            "
+            role="img"
+            aria-label="Interior de Veterinaria Huellas"
+          >
+            <div class="banner__overlay">
+              <div class="container banner__content">
+                <h1 class="soft">Bienvenidos a Huellas</h1>
+                <p class="lead">
+                  Atención especializada en <strong>perros y gatos</strong>.
+                  Reservá tu turno online para <strong>salud</strong> o
+                  <strong>estética/baño</strong>.
+                </p>
+                <div class="hero__actions">
+                  <a class="btn btn--primary" href="#turno"
+                    ><strong>Reservar turno</strong></a
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!--Tarjetas informativas debajo del banner -->
-      <section class="section hero hero--solo" aria-label="Información rápida">
-        <div class="container hero__grid">
-          <div class="hero__copy">
-            <div class="infoCards">
-              <article class="infoCard">
-                <h3>Horarios</h3>
-                <p><strong>Lunes a Viernes:</strong> 9:00 a 18:00</p>
-                <p><strong>Sábados:</strong> 9:00 a 12:30</p>
-              </article>
+        <!--Tarjetas informativas debajo del banner -->
+        <section
+          class="section hero hero--solo"
+          aria-label="Información rápida"
+        >
+          <div class="container hero__grid">
+            <div class="hero__copy">
+              <div class="infoCards">
+                <article class="infoCard">
+                  <h3>Horarios</h3>
+                  <p><strong>Lunes a Viernes:</strong> 9:00 a 18:00</p>
+                  <p><strong>Sábados:</strong> 9:00 a 12:30</p>
+                </article>
 
-              <article class="infoCard">
-                <h3>Pagos</h3>
-                <p>Solo <strong>POS</strong> en el local.</p>
-                <p class="muted">No se paga desde la app.</p>
-              </article>
-            </div>
+                <article class="infoCard">
+                  <h3>Pagos</h3>
+                  <p>Solo <strong>POS</strong> en el local.</p>
+                  <p class="muted">No se paga desde la app.</p>
+                </article>
+              </div>
 
-            <p class="fineprint">Atención en el local (no a domicilio).</p>
-          </div>
-        </div>
-      </section>
-
-      <!--Servicios -->
-      <section id="servicios" class="section">
-        <div class="container">
-          <div class="section__head">
-            <h2>Servicios</h2>
-          </div>
-          <div class="cardsGrid" id="servicesGrid" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <!--Equipo -->
-      <section id="equipo" class="section section--soft">
-        <div class="container">
-          <div class="section__head">
-            <h2>Nuestro equipo</h2>
-          </div>
-          <div class="cardsGrid" id="teamGrid"></div>
-        </div>
-      </section>
-
-      <!--Galería -->
-      <section id="galeria" class="section" aria-label="Galería de trabajos">
-        <div class="container">
-          <div class="section__head">
-            <h2>Galería</h2>
-          </div>
-
-          <div class="carousel" id="carousel">
-            <div class="carousel__track" id="carouselTrack"></div>
-
-            <div class="carousel__controls">
-              <button class="iconBtn" id="prevSlide" aria-label="Imagen anterior">
-                ‹
-              </button>
-              <div class="dots" id="carouselDots" aria-label="Indicadores"></div>
-              <button class="iconBtn" id="nextSlide" aria-label="Imagen siguiente">
-                ›
-              </button>
+              <p class="fineprint">Atención en el local (no a domicilio).</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Formulario de reservas de turnos -->
-      <section id="turno" class="section section--soft">
-        <div class="container">
-          <div class="section__head">
-            <h2>Reserva de turnos</h2>
+        <!--Servicios -->
+        <section id="servicios" class="section">
+          <div class="container">
+            <div class="section__head">
+              <h2>Servicios</h2>
+            </div>
+            <div class="cardsGrid" id="servicesGrid" aria-live="polite"></div>
           </div>
+        </section>
 
-          <div class="panel">
-            <form id="bookingForm" class="formGrid" novalidate>
-              <div class="field">
-                <label for="serviceType">Servicio</label>
-                <select id="serviceType" required>
-                  <option value="">Elegir...</option>
-                  <option value="med_consulta">Consulta médica — $500</option>
-                  <option value="estetica_completa">
-                    Estética completa — $1800
-                  </option>
-                </select>
-              </div>
+        <!--Equipo -->
+        <section id="equipo" class="section section--soft">
+          <div class="container">
+            <div class="section__head">
+              <h2>Nuestro equipo</h2>
+            </div>
+            <div class="cardsGrid" id="teamGrid"></div>
+          </div>
+        </section>
 
-              <div class="field">
-                <label for="date">Fecha</label>
-                <input type="date" id="date" required />
-              </div>
+        <!--Galería -->
+        <section id="galeria" class="section" aria-label="Galería de trabajos">
+          <div class="container">
+            <div class="section__head">
+              <h2>Galería</h2>
+            </div>
 
-              <div class="field">
-                <label for="profesionalId">Profesional</label>
-                <select id="profesionalId" required>
-                  <option value="">Elegir...</option>
-                </select>
-              </div>
+            <div class="carousel" id="carousel">
+              <div class="carousel__track" id="carouselTrack"></div>
 
-              <div class="field">
-                <label for="time">Horario disponible</label>
-                <select id="time" required>
-                  <option value="">Elegir fecha y profesional primero...</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="ownerName">Nombre del titular</label>
-                <input id="ownerName" type="text" placeholder="Ej: Ana Pérez" required maxlength="60" />
-              </div>
-
-              <div class="field">
-                <label for="phone">Teléfono</label>
-                <input id="phone" type="tel" placeholder="Ej: 099 123 456" required maxlength="20" />
-              </div>
-
-              <div class="field">
-                <label for="petName">Nombre de la mascota</label>
-                <input id="petName" type="text" placeholder="Ej: Luna" required maxlength="40" />
-              </div>
-
-              <div class="formActions">
-                <button type="submit" class="btn btn--primary">
-                  Confirmar reserva
+              <div class="carousel__controls">
+                <button
+                  class="iconBtn"
+                  id="prevSlide"
+                  aria-label="Imagen anterior"
+                >
+                  ‹
                 </button>
-                <button type="button" class="btn btn--ghost" id="resetBooking">
-                  Limpiar
+                <div
+                  class="dots"
+                  id="carouselDots"
+                  aria-label="Indicadores"
+                ></div>
+                <button
+                  class="iconBtn"
+                  id="nextSlide"
+                  aria-label="Imagen siguiente"
+                >
+                  ›
                 </button>
               </div>
+            </div>
+          </div>
+        </section>
 
-              <p class="fineprint">
-                Si necesitás cancelar, lo coordinás contactándote con nosotros
-                por teléfono o presencial.
+        <!-- Formulario de reservas de turnos -->
+        <section id="turno" class="section section--soft">
+          <div class="container">
+            <div class="section__head">
+              <h2>Reserva de turnos</h2>
+            </div>
+
+            <div class="panel">
+              <form id="bookingForm" class="formGrid" novalidate>
+                <div class="field">
+                  <label for="serviceType">Servicio</label>
+                  <select id="serviceType" required>
+                    <option value="">Elegir...</option>
+                    <option value="med_consulta">Consulta médica — $500</option>
+                    <option value="estetica_completa">
+                      Estética completa — $1800
+                    </option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="date">Fecha</label>
+                  <input type="date" id="date" required />
+                </div>
+
+                <div class="field">
+                  <label for="profesionalId">Profesional</label>
+                  <select id="profesionalId" required>
+                    <option value="">Elegir...</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="time">Horario disponible</label>
+                  <select id="time" required>
+                    <option value="">
+                      Elegir fecha y profesional primero...
+                    </option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="ownerName">Nombre del titular</label>
+                  <input
+                    id="ownerName"
+                    type="text"
+                    placeholder="Ej: Ana Pérez"
+                    required
+                    maxlength="60"
+                  />
+                </div>
+
+                <div class="field">
+                  <label for="phone">Teléfono</label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    placeholder="Ej: 099 123 456"
+                    required
+                    maxlength="20"
+                  />
+                </div>
+
+                <div class="field">
+                  <label for="petName">Nombre de la mascota</label>
+                  <input
+                    id="petName"
+                    type="text"
+                    placeholder="Ej: Luna"
+                    required
+                    maxlength="40"
+                  />
+                </div>
+
+                <div class="formActions">
+                  <button type="submit" class="btn btn--primary">
+                    Confirmar reserva
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn--ghost"
+                    id="resetBooking"
+                  >
+                    Limpiar
+                  </button>
+                </div>
+
+                <p class="fineprint">
+                  Si necesitás cancelar, lo coordinás contactándote con nosotros
+                  por teléfono o presencial.
+                </p>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!--Contacto -->
+        <section id="info" class="section">
+          <div class="container infoSplit">
+            <div>
+              <h2>Información</h2>
+              <p class="muted">
+                En Huellas cuidamos a tu mascota con un enfoque amable,
+                profesional y claro. Para asegurar un servicio de calidad, los
+                turnos tienen una duración de 30 minutos en consultas médicas y
+                1 hora en servicios de estética.
               </p>
-            </form>
-          </div>
-        </div>
-      </section>
+              <ul class="bullets">
+                <li>Atención en el local (no a domicilio).</li>
+                <li>Pagos únicamente con POS.</li>
+              </ul>
+            </div>
 
-      <!--Contacto -->
-      <section id="info" class="section">
-        <div class="container infoSplit">
-          <div>
-            <h2>Información</h2>
-            <p class="muted">
-              En Huellas cuidamos a tu mascota con un enfoque amable,
-              profesional y claro. Para asegurar un servicio de calidad, los
-              turnos tienen una duración de 30 minutos en consultas médicas y
-              1 hora en servicios de estética.
-            </p>
-            <ul class="bullets">
-              <li>Atención en el local (no a domicilio).</li>
-              <li>Pagos únicamente con POS.</li>
-            </ul>
+            <div class="contactCard">
+              <h3>Datos de contacto</h3>
+              <p>
+                <strong>Horarios:</strong> Lun-Vie 9:00-18:00 · Sáb 9:00-12:30
+              </p>
+              <p><strong>Mail:</strong> huellascontacto@gmail.com</p>
+              <p><strong>Teléfono:</strong> 2321 7654</p>
+            </div>
           </div>
+        </section>
 
-          <div class="contactCard">
-            <h3>Datos de contacto</h3>
-            <p>
-              <strong>Horarios:</strong> Lun-Vie 9:00-18:00 · Sáb 9:00-12:30
-            </p>
-            <p><strong>Mail:</strong> huellascontacto@gmail.com</p>
-            <p><strong>Teléfono:</strong> 2321 7654</p>
+        <!--Ubicación -->
+        <section id="ubicacion" class="section section--soft">
+          <div class="container">
+            <div class="section__head">
+              <h2>Ubicación</h2>
+            </div>
+
+            <div class="mapWrap">
+              <iframe
+                class="map"
+                title="Mapa Veterinaria Huellas"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.9999999999995!2d-56.188!3d-34.906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959f810000000001%3A0x000000000000000!2sCuareim%201451%2C%2011100%20Montevideo%2C%20Uruguay!5e0!3m2!1ses!2suy!4v1700000000000!5m2!1ses!2suy"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              >
+              </iframe>
+            </div>
+            <p><strong>Dirección:</strong> Cuareim 1451, Montevideo</p>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <!--Ubicación -->
-      <section id="ubicacion" class="section section--soft">
-        <div class="container">
-          <div class="section__head">
-            <h2>Ubicación</h2>
-          </div>
-
-          <div class="mapWrap">
-            <iframe class="map" title="Mapa Veterinaria Huellas"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.9999999999995!2d-56.188!3d-34.906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959f810000000001%3A0x000000000000000!2sCuareim%201451%2C%2011100%20Montevideo%2C%20Uruguay!5e0!3m2!1ses!2suy!4v1700000000000!5m2!1ses!2suy"
-              loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
-          </div>
-          <p><strong>Dirección:</strong> Cuareim 1451, Montevideo</p>
-        </div>
-      </section>
-    </div>
-
-    <!-- ==========================================================
+      <!-- ==========================================================
          VIEW: ADMIN (FUERA DE PRINCIPAL)
          ========================================================== -->
-    <div id="view-admin" class="view">
-      <section class="section section--soft">
-        <div class="container">
-          <div class="section__head">
-            <h2>Administración de turnos</h2>
-          </div>
-
-          <div class="panel">
-            <div class="adminBar">
-              <div class="filters" role="group" aria-label="Filtros de turnos">
-                <button class="chip is-active" data-admin-filter="hoy">
-                  Hoy
-                </button>
-                <button class="chip chip--icon" id="calendarFilterBtn" aria-label="Filtrar por fecha">
-                  📅
-                </button>
-                <input type="date" id="adminDateFilter" class="adminDateInput" aria-label="Elegir fecha" />
-                <button class="chip" data-admin-filter="activos">
-                  Activos
-                </button>
-                <button class="chip" data-admin-filter="cancelados">
-                  Cancelados
-                </button>
-                <button class="chip" data-admin-filter="todos">Todos</button>
-              </div>
-
-              <div class="adminActions">
-                <button class="btn btn--danger" id="cancelSelected">
-                  Cancelar seleccionados
-                </button>
-
-                <a class="btn" href="#inicio">Volver al Inicio</a>
-              </div>
+      <div id="view-admin" class="view">
+        <section class="section section--soft">
+          <div class="container">
+            <div class="section__head">
+              <h2>Administración de turnos</h2>
             </div>
 
-            <div class="tableWrap" aria-live="polite">
-              <table class="table" id="bookingsTable">
-                <thead>
-                  <tr>
-                    <th class="col-check">
-                      <input type="checkbox" id="selectAll" aria-label="Seleccionar todo" />
-                    </th>
-                    <th>Estado</th>
-                    <th>Cliente</th>
-                    <th>Mascota</th>
-                    <th>Servicio</th>
-                    <th>Profesional</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                  </tr>
-                </thead>
-                <tbody id="bookingsTbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+            <div class="panel">
+              <div class="adminBar">
+                <div
+                  class="filters"
+                  role="group"
+                  aria-label="Filtros de turnos"
+                >
+                  <button class="chip is-active" data-admin-filter="hoy">
+                    Hoy
+                  </button>
+                  <button
+                    class="chip chip--icon"
+                    id="calendarFilterBtn"
+                    aria-label="Filtrar por fecha"
+                  >
+                    📅
+                  </button>
+                  <input
+                    type="date"
+                    id="adminDateFilter"
+                    class="adminDateInput"
+                    aria-label="Elegir fecha"
+                  />
+                  <button class="chip" data-admin-filter="activos">
+                    Activos
+                  </button>
+                  <button class="chip" data-admin-filter="cancelados">
+                    Cancelados
+                  </button>
+                  <button class="chip" data-admin-filter="todos">Todos</button>
+                </div>
 
-    <!-- ==========================================================
-         VIEW: ACCESO (FUERA DE PRINCIPAL)
-         ========================================================== -->
-    <div id="view-acceso" class="view">
-      <section class="section">
-        <div class="container">
-          <div class="section__head">
-            <h2>Iniciar sesión</h2>
-          </div>
-
-          <div class="twoCols">
-            <div class="panel access-card">
-              <!-- LOGIN -->
-              <div id="loginCard">
-                <h3>Iniciar sesión</h3>
-
-                <form id="loginForm" class="stack" novalidate>
-                  <div class="field">
-                    <label for="logUser">Usuario</label>
-                    <input id="logUser" type="text" required maxlength="30" />
-                  </div>
-
-                  <div class="field">
-                    <label for="logPass">Contraseña</label>
-                    <input id="logPass" type="password" required minlength="8" />
-                  </div>
-
-                  <button class="btn btn--primary" type="submit">
-                    Ingresar
+                <div class="adminActions">
+                  <button class="btn btn--danger" id="cancelSelected">
+                    Cancelar seleccionados
                   </button>
 
-                  <p class="muted">
-                    Sesión actual: <strong id="sessionLabel">Invitado</strong>
-                  </p>
+                  <a class="btn" href="#inicio">Volver al Inicio</a>
+                </div>
+              </div>
 
-                  <p class="muted">
-                    Usuario demo admin:
-                    <strong>admin</strong> / <strong>admin1234</strong>
-                  </p>
-                </form>
+              <div class="tableWrap" aria-live="polite">
+                <table class="table" id="bookingsTable">
+                  <thead>
+                    <tr>
+                      <th class="col-check">
+                        <input
+                          type="checkbox"
+                          id="selectAll"
+                          aria-label="Seleccionar todo"
+                        />
+                      </th>
+                      <th>Estado</th>
+                      <th>Cliente</th>
+                      <th>Mascota</th>
+                      <th>Servicio</th>
+                      <th>Profesional</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookingsTbody"></tbody>
+                </table>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+      <!-- ==========================================================
+         VIEW: ACCESO (FUERA DE PRINCIPAL)
+         ========================================================== -->
+      <div id="view-acceso" class="view">
+        <section class="section">
+          <div class="container">
+            <div class="section__head">
+              <h2>Iniciar sesión</h2>
+            </div>
 
-    <!-- Modal confirmación (RF-08) -->
-    <div class="modal" id="modal" aria-hidden="true">
-      <div class="modal__backdrop" data-close-modal></div>
+            <div class="twoCols">
+              <div class="panel access-card">
+                <!-- LOGIN -->
+                <div id="loginCard">
+                  <h3>Iniciar sesión</h3>
 
-      <div class="modal__card modal__card--success" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="success__media">
-          <img
-            src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Mascota atendida en la veterinaria" />
-        </div>
+                  <form id="loginForm" class="stack" novalidate>
+                    <div class="field">
+                      <label for="logUser">Usuario</label>
+                      <input id="logUser" type="text" required maxlength="30" />
+                    </div>
 
-        <div class="success__content">
-          <h3 id="modalTitle">Turno confirmado</h3>
-          <p id="modalText" class="success__text"></p>
+                    <div class="field">
+                      <label for="logPass">Contraseña</label>
+                      <input
+                        id="logPass"
+                        type="password"
+                        required
+                        minlength="8"
+                      />
+                    </div>
 
-          <div class="modal__actions">
-            <button class="btn btn--primary" data-close-modal>Listo</button>
+                    <button class="btn btn--primary" type="submit">
+                      Ingresar
+                    </button>
+
+                    <p class="muted">
+                      Sesión actual: <strong id="sessionLabel">Invitado</strong>
+                    </p>
+
+                    <p class="muted">
+                      Usuario demo admin:
+                      <strong>admin</strong> / <strong>admin1234</strong>
+                    </p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Toast -->
+      <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+
+      <!-- Modal confirmación (RF-08) -->
+      <div class="modal" id="modal" aria-hidden="true">
+        <div class="modal__backdrop" data-close-modal></div>
+
+        <div
+          class="modal__card modal__card--success"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalTitle"
+        >
+          <div class="success__media">
+            <img
+              src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Mascota atendida en la veterinaria"
+            />
+          </div>
+
+          <div class="success__content">
+            <h3 id="modalTitle">Turno confirmado</h3>
+            <p id="modalText" class="success__text"></p>
+
+            <div class="modal__actions">
+              <button class="btn btn--primary" data-close-modal>Listo</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer class="footer">
-    <div class="footer__bottom">
-      <div class="footer__social">
-
-        <!-- Instagram -->
-        <a href="#inicio" class="socialLink" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" class="socialIcon">
-            <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 
+    <footer class="footer">
+      <div class="footer__bottom">
+        <div class="footer__social">
+          <!-- Instagram -->
+          <a href="#inicio" class="socialLink" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" class="socialIcon">
+              <path
+                d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 
           5-5V7c0-2.8-2.2-5-5-5H7zm10 2c1.7 0 3 1.3 3 3v10c0 
           1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 
           1.3-3 3-3h10zm-5 3.5A5.5 5.5 0 1 0 17.5 
           13 5.5 5.5 0 0 0 12 7.5zm0 2A3.5 3.5 0 1 1 
           8.5 13 3.5 3.5 0 0 1 12 9.5zm4.8-3.3a1.2 
-          1.2 0 1 0 1.2 1.2 1.2 1.2 0 0 0-1.2-1.2z" />
-          </svg>
-          <span>@huellas.vet</span>
-        </a>
+          1.2 0 1 0 1.2 1.2 1.2 1.2 0 0 0-1.2-1.2z"
+              />
+            </svg>
+            <span>@huellas.vet</span>
+          </a>
 
-        <!-- Facebook -->
-        <a href="#inicio" class="socialLink" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" class="socialIcon">
-            <path d="M22 12a10 10 0 1 0-11.6 
+          <!-- Facebook -->
+          <a href="#inicio" class="socialLink" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" class="socialIcon">
+              <path
+                d="M22 12a10 10 0 1 0-11.6 
           9.9v-7h-2.8V12h2.8V9.8c0-2.8 
           1.7-4.3 4.2-4.3 1.2 0 
           2.4.2 2.4.2v2.6h-1.4c-1.4 
           0-1.8.9-1.8 1.8V12h3.1l-.5 
-          2.9h-2.6v7A10 10 0 0 0 22 12z" />
-          </svg>
-          <span>Huellas Veterinaria</span>
-        </a>
+          2.9h-2.6v7A10 10 0 0 0 22 12z"
+              />
+            </svg>
+            <span>Huellas Veterinaria</span>
+          </a>
+        </div>
+
+        <p>© 2026 Veterinaria Huellas</p>
       </div>
+    </footer>
 
-      <p>© 2026 Veterinaria Huellas</p>
-    </div>
-  </footer>
+    <!--<script src="./src/app.js"></script>-->
 
-  <!--<script src="./src/app.js"></script>-->
-
-  <script src="src/core/bundle.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => window.main());
-  </script>
-</body>
-
+    <script src="src/core/bundle.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => window.main());
+    </script>
+  </body>
 </html>
