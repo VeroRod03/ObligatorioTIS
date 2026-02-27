@@ -895,6 +895,43 @@ main {
   transform: translateY(0);
 }
 
+/* Confirmación previa */
+
+.confirmModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.confirmModal--hidden {
+  display: none;
+}
+
+.confirmModal__card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.confirmModal__text {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.confirmModal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
 /* Modal */
 .modal {
   position: fixed;

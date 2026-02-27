@@ -721,46 +721,100 @@
   }
 
   function formularioTurno() {
-    var serviceTypeEl = $("#serviceType");
-    var dateEl = $("#date");
-    var profEl = $("#profesionalId");
-    var resetBtn = $("#resetBooking");
-    var form = $("#bookingForm");
+    // --- Cambio de servicio ---
+    $("#serviceType").addEventListener("change", () => {
+      const serviceId = $("#serviceType").value;
+      const service = servicioPorId(serviceId);
 
-    if (!serviceTypeEl || !dateEl || !profEl || !form) return;
-
-    serviceTypeEl.addEventListener("change", function () {
-      var serviceId = $("#serviceType").value;
-      var service = servicioPorId(serviceId);
-      mostrarOpcionesProfesionales((service && service.type) || "");
+      mostrarOpcionesProfesionales(service?.type || "");
 
       $("#time").innerHTML =
-        '<option value="">Elegir fecha y profesional primero...</option>';
+        `<option value="">Elegir fecha y profesional primero...</option>`;
       $("#date").value = "";
     });
 
-    dateEl.addEventListener("change", actualizarHorariosDisponibles);
-    profEl.addEventListener("change", actualizarHorariosDisponibles);
+    // --- Cambio de fecha o profesional ---
+    $("#date").addEventListener("change", actualizarHorariosDisponibles);
+    $("#profesionalId").addEventListener(
+      "change",
+      actualizarHorariosDisponibles,
+    );
 
-    if (resetBtn) {
-      resetBtn.addEventListener("click", function () {
-        form.reset();
-        $("#time").innerHTML =
-          '<option value="">Elegir fecha y profesional primero...</option>';
-        mostrarOpcionesProfesionales("");
-      });
+    // --- Botón limpiar ---
+
+    $("#resetBooking").addEventListener("click", () => {
+      $("#bookingForm").reset();
+      $("#time").innerHTML =
+        `<option value="">Elegir fecha y profesional primero...</option>`;
+      mostrarOpcionesProfesionales("");
+    });
+
+    // --- Turno ---
+
+    function crearTurno({
+      serviceId,
+      profesionalId,
+      dateISO,
+      time,
+      ownerName,
+      petName,
+      phone,
+    }) {
+      const bookings = obtenerTurnos();
+
+      const newBooking = {
+        id: crypto.randomUUID(),
+        status: "activo",
+        ownerName,
+        petName,
+        phone,
+        serviceId,
+        profesionalId,
+        dateISO,
+        time,
+      };
+
+      bookings.push(newBooking);
+      actualizarTurnos(bookings);
+
+      const s = servicioPorId(serviceId);
+      const p = profesionalPorId(profesionalId);
+
+      const fecha = new Date(dateISO);
+      const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
+        fecha.getMonth() + 1,
+      )}/${fecha.getFullYear()}`;
+
+      openModal(
+        `Mascota: ${petName}
+      Titular: ${ownerName}
+      Servicio: ${s.title}
+      Profesional: ${p.name}
+      Fecha: ${fechaFormateada}
+      Hora: ${time}`,
+      );
+
+      showToast("Turno registrado ✅");
+
+      $("#bookingForm").reset();
+      $("#time").innerHTML =
+        `<option value="">Elegir fecha y profesional primero...</option>`;
+      mostrarOpcionesProfesionales("");
+      renderizarTablaTurnos();
     }
 
-    form.addEventListener("submit", function (e) {
+    // ---- Submit ---
+
+    $("#bookingForm").addEventListener("submit", (e) => {
       e.preventDefault();
 
-      var serviceId = $("#serviceType").value;
-      var profesionalId = $("#profesionalId").value;
-      var dateISO = $("#date").value;
-      var time = $("#time").value;
-      var ownerName = ($("#ownerName").value || "").trim();
-      var petName = ($("#petName").value || "").trim();
-      var phone = ($("#phone").value || "").trim();
+      const serviceId = $("#serviceType").value;
+      const profesionalId = $("#profesionalId").value;
+      const dateISO = $("#date").value;
+      const time = $("#time").value;
+      const ownerName = $("#ownerName").value.trim();
+      const petName = $("#petName").value.trim();
+      const phone = $("#phone").value.trim();
 
       if (
         !serviceId ||
@@ -775,10 +829,11 @@
         return;
       }
 
-      var service = servicioPorId(serviceId);
-      var duration = service && service.type === "estetica" ? 60 : 30;
+      const service = servicioPorId(serviceId);
+      const duration = service?.type === "estetica" ? 60 : 30;
 
-      var todayISO = formatDateISO(new Date());
+      const todayISO = formatDateISO(new Date());
+
       if (dateISO < todayISO) {
         showToast("No es posible reservar en fechas anteriores al día de hoy.");
         return;
@@ -789,68 +844,45 @@
         return;
       }
 
-      var bookings = obtenerTurnos();
-      var ocupado = false;
-      for (var i = 0; i < bookings.length; i++) {
-        var b = bookings[i];
-        if (
+      const bookings = obtenerTurnos();
+      const ocupado = bookings.some(
+        (b) =>
           b.status === "activo" &&
           b.profesionalId === profesionalId &&
           b.dateISO === dateISO &&
-          b.time === time
-        ) {
-          ocupado = true;
-          break;
-        }
-      }
+          b.time === time,
+      );
 
       if (ocupado) {
         showToast("Ese horario ya está ocupado para ese profesional.");
-        actualizarHorariosDisponibles();
+        module.exports.actualizarHorariosDisponibles();
         return;
       }
 
-      var newBooking = {
-        id: crypto.randomUUID(),
-        status: "activo",
-        ownerName: ownerName,
-        petName: petName,
-        phone: phone,
-        serviceId: serviceId,
-        profesionalId: profesionalId,
-        dateISO: dateISO,
-        time: time,
+      const modalConfirm = document.getElementById("confirmReservaModal");
+      modalConfirm.classList.remove("confirmModal--hidden");
+
+      document.getElementById("btnConfirmarSi").onclick = () => {
+        modalConfirm.classList.add("confirmModal--hidden");
+
+        crearTurno({
+          serviceId,
+          profesionalId,
+          dateISO,
+          time,
+          ownerName,
+          petName,
+          phone,
+        });
       };
 
-      bookings.push(newBooking);
-      actualizarTurnos(bookings);
-
-      var s = servicioPorId(serviceId);
-      var p = profesionalPorId(profesionalId);
-      var fecha = new Date(dateISO + "T00:00:00");
-      var fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
-        fecha.getMonth() + 1,
-      )}/${fecha.getFullYear()}`;
-
-      openModal(
-        `Mascota: ${petName}
-        Titular: ${ownerName}
-        Servicio: ${s.title}
-        Profesional: ${p.name}
-        Fecha: ${fechaFormateada}
-        Hora: ${time}`,
-      );
-
-      showToast("Turno registrado ✅");
-
-      form.reset();
-      $("#time").innerHTML =
-        '<option value="">Elegir fecha y profesional primero...</option>';
-      mostrarOpcionesProfesionales("");
-      renderizarTablaTurnos();
+      document.getElementById("btnConfirmarNo").onclick = () => {
+        modalConfirm.classList.add("confirmModal--hidden");
+      };
     });
 
-    $("#date").setAttribute("min", formatDateISO(new Date()));
+    $("#date").min = formatDateISO(new Date());
+
     mostrarOpcionesProfesionales("");
   }
 

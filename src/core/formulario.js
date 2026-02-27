@@ -106,6 +106,65 @@ function formularioTurno() {
     mostrarOpcionesProfesionales("");
   });
 
+  // --- Turno ---
+
+  // funcion interna para la creacion de un turno
+  function crearTurno({
+    serviceId,
+    profesionalId,
+    dateISO,
+    time,
+    ownerName,
+    petName,
+    phone,
+  }) {
+    const bookings = obtenerTurnos();
+
+    const newBooking = {
+      id: crypto.randomUUID(),
+      status: "activo",
+      ownerName,
+      petName,
+      phone,
+      serviceId,
+      profesionalId,
+      dateISO,
+      time,
+    };
+
+    bookings.push(newBooking);
+    actualizarTurnos(bookings);
+
+    // Mostrar confirmación en modal
+    const s = servicioPorId(serviceId);
+    const p = profesionalPorId(profesionalId);
+
+    const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
+    const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
+      fecha.getMonth() + 1,
+    )}/${fecha.getFullYear()}`;
+
+    openModal(
+      `Mascota: ${petName}
+      Titular: ${ownerName}
+      Servicio: ${s.title}
+      Profesional: ${p.name}
+      Fecha: ${fechaFormateada}
+      Hora: ${time}`,
+    );
+
+    showToast("Turno registrado ✅");
+
+    //reset del formulario
+    $("#bookingForm").reset();
+    $("#time").innerHTML =
+      `<option value="">Elegir fecha y profesional primero...</option>`;
+    mostrarOpcionesProfesionales("");
+    renderizarTablaTurnos();
+  }
+
+  // ---- Submit ---
+
   $("#bookingForm").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -167,48 +226,29 @@ function formularioTurno() {
       return;
     }
 
-    // Crear turno
-    const newBooking = {
-      id: crypto.randomUUID(),
-      status: "activo",
-      ownerName,
-      petName,
-      phone,
-      serviceId,
-      profesionalId,
-      dateISO,
-      time,
+    //mostramos la confirmacion de la reserva
+    const modalConfirm = document.getElementById("confirmReservaModal");
+    modalConfirm.classList.remove("confirmModal--hidden");
+
+    //se crea el turno si la respuesta fue si
+    document.getElementById("btnConfirmarSi").onclick = () => {
+      modalConfirm.classList.add("confirmModal--hidden");
+
+      crearTurno({
+        serviceId,
+        profesionalId,
+        dateISO,
+        time,
+        ownerName,
+        petName,
+        phone,
+      });
     };
 
-    bookings.push(newBooking);
-    actualizarTurnos(bookings);
-
-    // Mostrar confirmación en modal
-    const s = servicioPorId(serviceId);
-    const p = profesionalPorId(profesionalId);
-
-    const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
-    const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
-      fecha.getMonth() + 1,
-    )}/${fecha.getFullYear()}`;
-
-    openModal(
-      `Mascota: ${petName}
-      Titular: ${ownerName}
-      Servicio: ${s.title}
-      Profesional: ${p.name}
-      Fecha: ${fechaFormateada}
-      Hora: ${time}`,
-    );
-
-    showToast("Turno registrado ✅");
-
-    // Reset del formulario
-    $("#bookingForm").reset();
-    $("#time").innerHTML =
-      `<option value="">Elegir fecha y profesional primero...</option>`;
-    mostrarOpcionesProfesionales("");
-    renderizarTablaTurnos();
+    //si la respuesta fue no se esconde el modal y no se hace nada mas
+    document.getElementById("btnConfirmarNo").onclick = () => {
+      modalConfirm.classList.add("confirmModal--hidden");
+    };
   });
 
   // Fecha mínima = hoy

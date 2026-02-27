@@ -451,7 +451,7 @@
         aria-atomic="true"
       ></div>
 
-      <!-- Modal confirmación (RF-08) -->
+      <!-- Modal confirmación visual de reserva -->
       <div class="modal" id="modal" aria-hidden="true">
         <div class="modal__backdrop" data-close-modal></div>
 
@@ -475,6 +475,20 @@
             <div class="modal__actions">
               <button class="btn btn--primary" data-close-modal>Listo</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmación previa -->
+      <div id="confirmReservaModal" class="confirmModal confirmModal--hidden">
+        <div class="confirmModal__card">
+          <p class="confirmModal__text">
+            ¿Está seguro que quiere reservar este turno?
+          </p>
+
+          <div class="confirmModal__actions">
+            <button class="btn btn--primary" id="btnConfirmarSi">Sí</button>
+            <button class="btn btn--ghost" id="btnConfirmarNo">No</button>
           </div>
         </div>
       </div>
