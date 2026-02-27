@@ -234,7 +234,6 @@
     acceso: { view: "view-acceso" },
   };
 
-
   function showView(viewId) {
     var views = $$(".view");
     for (var i = 0; i < views.length; i++) {
@@ -317,6 +316,31 @@
         );
       })
       .join("");
+    initServiciosClick();
+  }
+
+  //funcion para menejar el comportamiento de las tarjetas de servicio
+  function initServiciosClick() {
+    const cards = document.querySelectorAll(".card--clickable");
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const servicioId = card.dataset.id;
+
+        //inicializamos el tipo de servicio en el formulario de reservas
+        const serviceSelect = document.querySelector("#serviceType");
+
+        serviceSelect.value = servicioId;
+
+        // Disparar evento change para que cargue a los profesionales
+        serviceSelect.dispatchEvent(new Event("change"));
+
+        //scroll suave al formulario
+        document
+          .querySelector("#turno")
+          .scrollIntoView({ behavior: "smooth" });
+      });
+    });
   }
 
   // ---------- Render equipo ----------
@@ -332,10 +356,10 @@
           '    <div class="avatar avatar--photo" aria-hidden="true">' +
           (p.photo
             ? '<img src="' +
-            p.photo +
-            '" alt="' +
-            p.name +
-            '" onerror="this.remove();">'
+              p.photo +
+              '" alt="' +
+              p.name +
+              '" onerror="this.remove();">'
             : p.initials) +
           "    </div>" +
           '    <div class="card__meta">' +
@@ -584,8 +608,8 @@
     if (!select) return;
     var list = type
       ? profesionales.filter(function (p) {
-        return p.role === type;
-      })
+          return p.role === type;
+        })
       : profesionales;
 
     select.innerHTML =
@@ -805,7 +829,7 @@
       var p = profesionalPorId(profesionalId);
       var fecha = new Date(dateISO + "T00:00:00");
       var fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
-        fecha.getMonth() + 1
+        fecha.getMonth() + 1,
       )}/${fecha.getFullYear()}`;
 
       openModal(

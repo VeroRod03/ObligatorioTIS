@@ -86,7 +86,8 @@ function formularioTurno() {
     mostrarOpcionesProfesionales(service?.type || "");
 
     // Resetea fecha y horarios
-    $("#time").innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
+    $("#time").innerHTML =
+      `<option value="">Elegir fecha y profesional primero...</option>`;
     $("#date").value = "";
   });
 
@@ -100,7 +101,8 @@ function formularioTurno() {
   pero queremos que aparezca ese mensaje específicamente */
   $("#resetBooking").addEventListener("click", () => {
     $("#bookingForm").reset();
-    $("#time").innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
+    $("#time").innerHTML =
+      `<option value="">Elegir fecha y profesional primero...</option>`;
     mostrarOpcionesProfesionales("");
   });
 
@@ -187,7 +189,7 @@ function formularioTurno() {
 
     const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
     const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
-      fecha.getMonth() + 1
+      fecha.getMonth() + 1,
     )}/${fecha.getFullYear()}`;
 
     openModal(
@@ -203,7 +205,8 @@ function formularioTurno() {
 
     // Reset del formulario
     $("#bookingForm").reset();
-    $("#time").innerHTML = `<option value="">Elegir fecha y profesional primero...</option>`;
+    $("#time").innerHTML =
+      `<option value="">Elegir fecha y profesional primero...</option>`;
     mostrarOpcionesProfesionales("");
     renderizarTablaTurnos();
   });

@@ -43,12 +43,16 @@ body {
     "Noto Sans",
     sans-serif;
   background:
-    radial-gradient(1200px 700px at 20% 0%,
+    radial-gradient(
+      1200px 700px at 20% 0%,
       rgba(167, 243, 208, 0.35),
-      transparent 50%),
-    radial-gradient(1000px 700px at 90% 10%,
+      transparent 50%
+    ),
+    radial-gradient(
+      1000px 700px at 90% 10%,
       rgba(251, 207, 232, 0.35),
-      transparent 55%),
+      transparent 55%
+    ),
     var(--bg);
   color: var(--text);
   height: 100%;
@@ -77,9 +81,11 @@ main {
 
 /* Topbar */
 .topbar {
-  background: linear-gradient(90deg,
-      rgba(122, 166, 255, 0.18),
-      rgba(251, 207, 232, 0.18));
+  background: linear-gradient(
+    90deg,
+    rgba(122, 166, 255, 0.18),
+    rgba(251, 207, 232, 0.18)
+  );
   border-bottom: 1px solid rgba(31, 41, 55, 0.08);
 }
 
@@ -135,9 +141,11 @@ main {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: linear-gradient(135deg,
-      rgba(122, 166, 255, 0.35),
-      rgba(167, 243, 208, 0.35));
+  background: linear-gradient(
+    135deg,
+    rgba(122, 166, 255, 0.35),
+    rgba(167, 243, 208, 0.35)
+  );
   box-shadow: var(--shadow2);
   font-size: 1.35rem;
 }
@@ -204,7 +212,6 @@ main {
 
 /* Views (para cumplir: Inicio solo con secciones principales) */
 
-
 .view {
   display: none;
   width: 100%;
@@ -215,16 +222,17 @@ main {
   min-height: 100%;
 }
 
-
 /* Sections */
 .section {
   padding: 54px 0;
 }
 
 .section--soft {
-  background: linear-gradient(180deg,
-      rgba(243, 248, 255, 0.85),
-      rgba(255, 255, 255, 0));
+  background: linear-gradient(
+    180deg,
+    rgba(243, 248, 255, 0.85),
+    rgba(255, 255, 255, 0)
+  );
 }
 
 .section__head {
@@ -280,7 +288,7 @@ main {
 }
 
 .soft {
-  background: rgba(122, 166, 255, 0.75)
+  background: rgba(122, 166, 255, 0.75);
 }
 
 .lead {
@@ -353,9 +361,11 @@ main {
 }
 
 .btn--primary {
-  background: linear-gradient(135deg,
-      rgba(122, 166, 255, 0.95),
-      rgba(167, 243, 208, 0.85));
+  background: linear-gradient(
+    135deg,
+    rgba(122, 166, 255, 0.95),
+    rgba(167, 243, 208, 0.85)
+  );
   border: 1px solid rgba(122, 166, 255, 0.35);
   color: rgba(17, 24, 39, 0.95);
 }
@@ -396,6 +406,16 @@ main {
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
+}
+
+.card--clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card--clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .card:hover {
@@ -490,7 +510,6 @@ main {
   pointer-events: none;
 }
 
-
 /* Carousel */
 .carousel {
   background: rgba(255, 255, 255, 0.92);
@@ -522,9 +541,11 @@ main {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0),
-      rgba(31, 41, 55, 0.35));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0),
+    rgba(31, 41, 55, 0.35)
+  );
 }
 
 .slide__label {
@@ -690,8 +711,8 @@ main {
 }
 
 /* Cuando solo hay una tarjeta visible */
-.twoCols>.panel:only-child,
-.twoCols>.panel:not([hidden]) {
+.twoCols > .panel:only-child,
+.twoCols > .panel:not([hidden]) {
   grid-column: 1 / -1;
   max-width: 420px;
   margin: 0 auto;
@@ -741,9 +762,11 @@ main {
 }
 
 .contactCard {
-  background: linear-gradient(135deg,
-      rgba(122, 166, 255, 0.18),
-      rgba(251, 207, 232, 0.18));
+  background: linear-gradient(
+    135deg,
+    rgba(122, 166, 255, 0.18),
+    rgba(251, 207, 232, 0.18)
+  );
   border: 1px solid rgba(31, 41, 55, 0.08);
   border-radius: 22px;
   padding: 18px;
@@ -777,9 +800,7 @@ main {
 
 /* Footer */
 .footer {
-  background: linear-gradient(180deg,
-      #ffffff,
-      #f3f8ff);
+  background: linear-gradient(180deg, #ffffff, #f3f8ff);
   border-top: 1px solid rgba(31, 41, 55, 0.08);
   margin-top: 40px;
 }
@@ -851,7 +872,6 @@ main {
 .socialLink:hover:last-child {
   color: #1877f2;
 }
-
 
 /* Toast */
 .toast {
@@ -927,9 +947,11 @@ main {
 /* Imagen grande */
 .success__media {
   height: 220px;
-  background: linear-gradient(180deg,
-      rgba(16, 185, 129, 0.15),
-      rgba(16, 185, 129, 0.35));
+  background: linear-gradient(
+    180deg,
+    rgba(16, 185, 129, 0.15),
+    rgba(16, 185, 129, 0.35)
+  );
 }
 
 .success__media img {
@@ -975,7 +997,6 @@ main {
 }
 
 /* Responsive */
-
 
 @media (max-width: 980px) {
   .hero__grid {
@@ -1077,10 +1098,12 @@ main {
 .banner__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top,
-      rgba(0, 0, 0, 0.55),
-      rgba(0, 0, 0, 0.15),
-      rgba(0, 0, 0, 0.05));
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.05)
+  );
   display: grid;
   place-items: center;
   /* centra vertical y horizontal */

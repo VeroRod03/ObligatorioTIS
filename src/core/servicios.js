@@ -22,7 +22,7 @@ function cargarServicios() {
           : "Servicio de estética y baño";
 
       return `
-        <article class="card" role="article">
+        <article class="card card--clickable" data-id="${s.id}" role="article">
           <div class="card__top">
             <div class="avatar">
               <img src="${imgSrc}" alt="${imgAlt}">
@@ -46,6 +46,32 @@ function cargarServicios() {
       `;
     })
     .join("");
+  //manejamos los clicks a las tarjetas
+  initServiciosClick();
+}
+
+//funcion para menejar el comportamiento de las tarjetas de servicio
+function initServiciosClick() {
+  const cards = document.querySelectorAll(".card--clickable");
+
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const servicioId = card.dataset.id;
+
+      //inicializamos el tipo de servicio en el formulario de reservas
+      const serviceSelect = document.querySelector("#serviceType");
+
+      serviceSelect.value = servicioId;
+
+      // Disparar evento change para que cargue a los profesionales
+      serviceSelect.dispatchEvent(new Event("change"));
+
+      //scroll suave al formulario
+      document
+        .querySelector("#turno")
+        .scrollIntoView({ behavior: "smooth" });
+    });
+  });
 }
 
 module.exports = {
