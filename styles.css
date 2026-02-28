@@ -711,7 +711,7 @@ main {
 .twoCols > .panel:only-child,
 .twoCols > .panel:not([hidden]) {
   grid-column: 1 / -1;
-  max-width: 420px;
+  max-width: 360px;
   margin: 0 auto;
 }
 
@@ -727,8 +727,15 @@ main {
 }
 
 .access-card {
-  max-width: 420px;
+  width: 100%;
+  max-width: 360px;
   margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .access-card {
+    max-width: 600px;
+  }
 }
 
 .linkBtn {
