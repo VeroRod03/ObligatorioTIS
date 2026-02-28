@@ -4,7 +4,7 @@ const { cargarGaleria } = require("./galeria");
 const { cargarServicios } = require("./servicios");
 const { cargarEquipo } = require("./equipo");
 const { initAuth } = require("./sesion");
-const { formularioTurno } = require("./formulario");
+const { formularioTurno, resetFormularioTurno } = require("./formulario");
 const { initAdmin, renderizarTablaTurnos } = require("./listado");
 const { initModal } = require("./modal");
 
@@ -16,22 +16,15 @@ if (typeof window !== "undefined") {
 const { getSession, isAdmin } = require("./sesion");
 const { showToast } = require("./helpers");
 
-function controlarAccesoAdmin() {
-  const adminSection = document.getElementById("adminSection");
-  if (!adminSection) return;
-
-  adminSection.style.display = isAdmin() ? "" : "none";
-}
-
 window.addEventListener("hashchange", () => {
   if (location.hash === "#admin" && !isAdmin()) {
     showToast("Acceso denegado.");
     location.hash = "#inicio";
   }
-
-  controlarAccesoAdmin();
+  if (window.location.hash === "#turno") {
+    resetFormularioTurno();
+  }
 });
-
 
 // ---------- Init ----------
 function main() {
@@ -42,7 +35,6 @@ function main() {
   cargarEquipo();
 
   initAuth();
-  controlarAccesoAdmin();
   formularioTurno();
   initAdmin();
   initModal();

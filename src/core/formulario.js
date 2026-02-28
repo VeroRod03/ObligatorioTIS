@@ -76,6 +76,19 @@ function actualizarHorariosDisponibles() {
   timeSelect.innerHTML = `<option value="">Elegir...</option>` + options;
 }
 
+function resetFormularioTurno() {
+  const form = $("#bookingForm");
+
+  form.reset();
+
+  $("#time").innerHTML =
+    `<option value="">Elegir fecha y profesional primero...</option>`;
+
+  mostrarOpcionesProfesionales("");
+
+  $("#date").min = formatDateISO(new Date());
+}
+
 function formularioTurno() {
   // --- Cambio de servicio ---
   // Según el tipo de servicio seleccionado, carga los profesionales de ese tipo de servicio
@@ -287,4 +300,5 @@ module.exports = {
   generarSlotsTiempo,
   actualizarHorariosDisponibles,
   formularioTurno,
+  resetFormularioTurno
 };

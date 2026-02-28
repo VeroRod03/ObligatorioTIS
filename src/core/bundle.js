@@ -248,11 +248,14 @@
     const raw = (location.hash || "#inicio").replace("#", "");
     const route = ROUTES[raw] || ROUTES["inicio"];
 
-    // 🔐 PROTECCIÓN ADMIN
+    // PROTECCIÓN ADMIN
     if (raw === "admin" && !isAdmin()) {
       showToast("Acceso denegado.");
       location.hash = "#inicio";
       return;
+    }
+    if (window.location.hash === "#turno") {
+      resetFormularioTurno();
     }
 
     showView(route.view);
@@ -720,6 +723,19 @@
     timeSelect.innerHTML = '<option value="">Elegir...</option>' + options;
   }
 
+  function resetFormularioTurno() {
+    const form = $("#bookingForm");
+
+    form.reset();
+
+    $("#time").innerHTML =
+      `<option value="">Elegir fecha y profesional primero...</option>`;
+
+    mostrarOpcionesProfesionales("");
+
+    $("#date").min = formatDateISO(new Date());
+  }
+
   function formularioTurno() {
     // --- Cambio de servicio ---
     $("#serviceType").addEventListener("change", () => {
@@ -1033,8 +1049,6 @@
           }
           return b;
         });
-
-        actualizarHorariosDisponibles();
         actualizarTurnos(bookings);
         showToast("Turnos cancelados.");
         renderizarTablaTurnos();
@@ -1079,13 +1093,6 @@
     });
   }
 
-  // ---------- Control de acceso admin ----------
-  function controlarAccesoAdmin() {
-    const adminSection = document.getElementById("adminSection");
-    if (!adminSection) return;
-
-    adminSection.style.display = isAdmin() ? "" : "none";
-  }
 
   // ---------- Main ----------
   function main() {
@@ -1094,7 +1101,6 @@
     cargarServicios();
     cargarEquipo();
     initAuth();
-    controlarAccesoAdmin();
     formularioTurno();
     initAdmin();
     initModal();

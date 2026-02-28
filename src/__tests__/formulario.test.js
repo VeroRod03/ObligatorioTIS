@@ -26,7 +26,13 @@ jest.mock("../core/constantes", () => ({
   ],
 }));
 
-const { $: $, pad2, formatDateISO, showToast, openModal } = require("../core/helpers");
+const {
+  $: $,
+  pad2,
+  formatDateISO,
+  showToast,
+  openModal,
+} = require("../core/helpers");
 const {
   servicioPorId,
   profesionalPorId,
@@ -75,6 +81,18 @@ function setupDOM() {
     <button id="resetBooking" type="button">Limpiar</button>
     <button type="submit">Reservar</button>
   </form>
+    <div id="confirmReservaModal" class="confirmModal confirmModal--hidden">
+        <div class="confirmModal__card">
+          <p class="confirmModal__text">
+            ¿Está seguro que quiere reservar este turno?
+          </p>
+
+          <div class="confirmModal__actions">
+            <button class="btn btn--primary" id="btnConfirmarSi">Sí</button>
+            <button class="btn btn--ghost" id="btnConfirmarNo">No</button>
+          </div>
+        </div>
+      </div>
   `;
 
   // mock de $ para que use el DOM real
@@ -98,8 +116,10 @@ beforeEach(() => {
 
   // mocks turno
   servicioPorId.mockImplementation((id) => {
-    if (id === "med_consulta") return { id, type: "salud", title: "Consulta médica" };
-    if (id === "estetica_completa") return { id, type: "estetica", title: "Estética/Baño" };
+    if (id === "med_consulta")
+      return { id, type: "salud", title: "Consulta médica" };
+    if (id === "estetica_completa")
+      return { id, type: "estetica", title: "Estética/Baño" };
     return null;
   });
 
@@ -179,7 +199,9 @@ test("si no hay una fecha, muestra 'Elegir fecha y profesional primero...'", () 
   document.getElementById("date").value = "";
   actualizarHorariosDisponibles();
 
-  expect(document.getElementById("time").innerHTML).toContain("Elegir fecha y profesional primero...");
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Elegir fecha y profesional primero...",
+  );
 });
 
 // Verifica que no permita al usuario elegir un horario si no ha elegido un profesional
@@ -187,17 +209,21 @@ test("si no hay un profesional seleccionado, muestra 'Elegir fecha y profesional
   document.getElementById("profesionalId").value = "";
   actualizarHorariosDisponibles();
 
-  expect(document.getElementById("time").innerHTML).toContain("Elegir fecha y profesional primero...");
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Elegir fecha y profesional primero...",
+  );
 });
 
 // Verifica que si el día elegido es domingo, se muestre "Cerrado (domingo)" y no se puedan elegir horarios
-test("si es domingo, muestra 'Cerrado (domingo)'", () => {
+test("si es domingo, muestra 'Cerrado domingo'", () => {
   document.getElementById("serviceType").value = "med_consulta";
   document.getElementById("profesionalId").value = "v1";
   document.getElementById("date").value = "2026-02-22"; // domingo
   actualizarHorariosDisponibles();
 
-  expect(document.getElementById("time").innerHTML).toContain("Cerrado (domingo)");
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Cerrado (domingo)",
+  );
 });
 
 // Verifica que si ya hay una reserva para el profesional, fecha y hora seleccionados, el horario
@@ -208,8 +234,20 @@ test("deshabilita horarios ocupados y agrega '— Ocupado'", () => {
   document.getElementById("profesionalId").value = "v1";
 
   obtenerTurnos.mockReturnValue([
-    { id: "t1", status: "activo", dateISO: "2026-02-20", time: "10:00", profesionalId: "v1" },
-    { id: "t2", status: "activo", dateISO: "2026-02-20", time: "11:00", profesionalId: "v1" },
+    {
+      id: "t1",
+      status: "activo",
+      dateISO: "2026-02-20",
+      time: "10:00",
+      profesionalId: "v1",
+    },
+    {
+      id: "t2",
+      status: "activo",
+      dateISO: "2026-02-20",
+      time: "11:00",
+      profesionalId: "v1",
+    },
   ]);
   actualizarHorariosDisponibles();
 
@@ -230,7 +268,9 @@ test("al cambiar servicio: carga profesionales de ese type y resetea fecha + tim
   serviceSelect.dispatchEvent(new Event("change"));
 
   expect(document.getElementById("date").value).toBe("");
-  expect(document.getElementById("time").innerHTML).toContain("Elegir fecha y profesional primero...");
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Elegir fecha y profesional primero...",
+  );
   // y se cargaron opciones de estética:
   const html = document.getElementById("profesionalId").innerHTML;
   expect(html).toContain('value="e1"');
@@ -247,14 +287,18 @@ test("botón reset: resetea form, resetea time y carga todos los profesionales",
 
   document.getElementById("resetBooking").click();
 
-  expect(document.getElementById("time").innerHTML).toContain("Elegir fecha y profesional primero...");
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Elegir fecha y profesional primero...",
+  );
   // profesionales todos (porque mostrarOpcionesProfesionales('') )
   const html = document.getElementById("profesionalId").innerHTML;
   expect(html).toContain('value="v1"');
   expect(html).toContain('value="v2"');
   expect(html).toContain('value="e1"');
   // y se reseteó el form
-  expect(document.getElementById("serviceType").innerHTML).toContain("Elegir...");
+  expect(document.getElementById("serviceType").innerHTML).toContain(
+    "Elegir...",
+  );
   expect(document.getElementById("date").value).toBe("");
 });
 
@@ -265,7 +309,9 @@ test("submit: si faltan campos muestra toast y no guarda", () => {
   // faltan todos
   document.getElementById("bookingForm").dispatchEvent(new Event("submit"));
 
-  expect(showToast).toHaveBeenCalledWith("Completá todos los campos obligatorios.");
+  expect(showToast).toHaveBeenCalledWith(
+    "Completá todos los campos obligatorios.",
+  );
   expect(actualizarTurnos).not.toHaveBeenCalled();
 });
 
@@ -284,7 +330,9 @@ test("submit: si fecha es anterior a hoy, muestra toast", () => {
 
   document.getElementById("bookingForm").dispatchEvent(new Event("submit"));
 
-  expect(showToast).toHaveBeenCalledWith("No es posible reservar en fechas anteriores al día de hoy.");
+  expect(showToast).toHaveBeenCalledWith(
+    "No es posible reservar en fechas anteriores al día de hoy.",
+  );
   expect(actualizarTurnos).not.toHaveBeenCalled();
 });
 
@@ -307,11 +355,13 @@ test("submit: si estaDentroHorarioAtencion da false, muestra toast", () => {
 
   document.getElementById("bookingForm").dispatchEvent(new Event("submit"));
 
-  expect(showToast).toHaveBeenCalledWith("Ese horario está fuera del horario de atención.");
+  expect(showToast).toHaveBeenCalledWith(
+    "Ese horario está fuera del horario de atención.",
+  );
   expect(actualizarTurnos).not.toHaveBeenCalled();
 });
 
-// Verifica que si el horario elegido ya está ocupado, se muestre un toast indicándolo, se 
+// Verifica que si el horario elegido ya está ocupado, se muestre un toast indicándolo, se
 // bloqueé el horario en el select y no se guarde el turno
 test("submit: si horario está ocupado, muestra toast y llama actualizarHorariosDisponibles", () => {
   // reseteamos el valor del mock para este test
@@ -327,7 +377,7 @@ test("submit: si horario está ocupado, muestra toast y llama actualizarHorarios
       time: "10:00",
       ownerName: "Juana",
       petName: "Milo",
-      phone: "099"
+      phone: "099",
     },
   ]);
 
@@ -346,7 +396,7 @@ test("submit: si horario está ocupado, muestra toast y llama actualizarHorarios
     .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
 
   expect(showToast).toHaveBeenCalledWith(
-    "Ese horario ya está ocupado para ese profesional."
+    "Ese horario ya está ocupado para ese profesional.",
   );
   // valida que el slot quedó bloqueado
   const html = document.getElementById("time").innerHTML;
@@ -357,7 +407,7 @@ test("submit: si horario está ocupado, muestra toast y llama actualizarHorarios
 });
 
 // Verifica que al enviar el formulario correctamente, se guarde el turno, se abra un modal
-// con la confirmación, se muestre un toast, se reseteen los campos del formulario y se 
+// con la confirmación, se muestre un toast, se reseteen los campos del formulario y se
 // renderice la tabla de turnos
 test("submit: caso OK guarda turno, abre modal, muestra toast, resetea form y renderiza tabla", () => {
   obtenerTurnos.mockReturnValue([]); // no hay ocupados
@@ -373,6 +423,8 @@ test("submit: caso OK guarda turno, abre modal, muestra toast, resetea form y re
   document.getElementById("phone").value = "099";
 
   document.getElementById("bookingForm").dispatchEvent(new Event("submit"));
+
+  document.getElementById("btnConfirmarSi").click();
 
   // guarda
   expect(actualizarTurnos).toHaveBeenCalledTimes(1);
@@ -395,11 +447,17 @@ test("submit: caso OK guarda turno, abre modal, muestra toast, resetea form y re
   expect(openModal).toHaveBeenCalled();
   expect(showToast).toHaveBeenCalledWith("Turno registrado ✅");
 
-  // verificamos que todos los campos estén vacíos o reseteados 
-  expect(document.getElementById("serviceType").innerHTML).toContain("Elegir...");
-  expect(document.getElementById("profesionalId").innerHTML).toContain("Elegir...");
+  // verificamos que todos los campos estén vacíos o reseteados
+  expect(document.getElementById("serviceType").innerHTML).toContain(
+    "Elegir...",
+  );
+  expect(document.getElementById("profesionalId").innerHTML).toContain(
+    "Elegir...",
+  );
   expect(document.getElementById("date").value).toBe("");
-  expect(document.getElementById("time").innerHTML).toContain("Elegir fecha y profesional primero...");
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Elegir fecha y profesional primero...",
+  );
   expect(document.getElementById("ownerName").value).toBe("");
   expect(document.getElementById("petName").value).toBe("");
   expect(document.getElementById("phone").value).toBe("");

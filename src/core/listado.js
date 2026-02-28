@@ -62,7 +62,6 @@ function initAdmin() {
     const bookings = obtenerTurnos().map((b) =>
       ids.includes(b.id) ? { ...b, status: "cancelado" } : b,
     );
-    actualizarHorariosDisponibles();
     actualizarTurnos(bookings);
     showToast("Turnos cancelados.");
     renderizarTablaTurnos();
