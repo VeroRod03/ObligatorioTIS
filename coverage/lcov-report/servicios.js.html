@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.68% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>14/19</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.71% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>6/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.22% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/18</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -142,8 +142,7 @@
 <a name='L77'></a><a href='#L77'>77</a>
 <a name='L78'></a><a href='#L78'>78</a>
 <a name='L79'></a><a href='#L79'>79</a>
-<a name='L80'></a><a href='#L80'>80</a>
-<a name='L81'></a><a href='#L81'>81</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L80'></a><a href='#L80'>80</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -197,29 +196,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -272,29 +270,27 @@ function cargarServicios() {
     })
     .join("");
   //manejamos los clicks a las tarjetas
-  initServiciosClick();
+  clickTarjetasServicio();
 }
 &nbsp;
 //funcion para menejar el comportamiento de las tarjetas de servicio
-function initServiciosClick() {
+function clickTarjetasServicio() {
   const cards = document.querySelectorAll(".card--clickable");
 &nbsp;
   cards.forEach((card) =&gt; {
-    card.addEventListener("click", <span class="fstat-no" title="function not covered" >()</span> =&gt; {
-      const servicioId = <span class="cstat-no" title="statement not covered" >card.dataset.id;</span>
+    card.addEventListener("click", () =&gt; {
+      const servicioId = card.dataset.id;
 &nbsp;
       //inicializamos el tipo de servicio en el formulario de reservas
-      const serviceSelect = <span class="cstat-no" title="statement not covered" >document.querySelector("#serviceType");</span>
+      const serviceSelect = document.querySelector("#serviceType");
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      serviceSelect.value = servicioId;</span>
+      serviceSelect.value = servicioId;
 &nbsp;
-      // Disparar evento change para que cargue a los profesionales
-<span class="cstat-no" title="statement not covered" >      serviceSelect.dispatchEvent(new Event("change"));</span>
+      //disparar evento change para que cargue a los profesionales
+      serviceSelect.dispatchEvent(new Event("change"));
 &nbsp;
       //scroll suave al formulario
-<span class="cstat-no" title="statement not covered" >      document</span>
-        .querySelector("#turno")
-        .scrollIntoView({ behavior: "smooth" });
+      document.querySelector("#turno").scrollIntoView({ behavior: "smooth" });
     });
   });
 }
@@ -302,6 +298,7 @@ function initServiciosClick() {
 module.exports = {
   servicioPorId,
   cargarServicios,
+  clickTarjetasServicio,
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -310,7 +307,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-28T20:18:36.948Z
+                at 2026-02-28T22:06:30.808Z
             </div>
         <script src="prettify.js"></script>
         <script>

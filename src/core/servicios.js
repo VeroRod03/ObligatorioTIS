@@ -47,11 +47,11 @@ function cargarServicios() {
     })
     .join("");
   //manejamos los clicks a las tarjetas
-  initServiciosClick();
+  clickTarjetasServicio();
 }
 
 //funcion para menejar el comportamiento de las tarjetas de servicio
-function initServiciosClick() {
+function clickTarjetasServicio() {
   const cards = document.querySelectorAll(".card--clickable");
 
   cards.forEach((card) => {
@@ -63,13 +63,11 @@ function initServiciosClick() {
 
       serviceSelect.value = servicioId;
 
-      // Disparar evento change para que cargue a los profesionales
+      //disparar evento change para que cargue a los profesionales
       serviceSelect.dispatchEvent(new Event("change"));
 
       //scroll suave al formulario
-      document
-        .querySelector("#turno")
-        .scrollIntoView({ behavior: "smooth" });
+      document.querySelector("#turno").scrollIntoView({ behavior: "smooth" });
     });
   });
 }
@@ -77,4 +75,5 @@ function initServiciosClick() {
 module.exports = {
   servicioPorId,
   cargarServicios,
+  clickTarjetasServicio,
 };

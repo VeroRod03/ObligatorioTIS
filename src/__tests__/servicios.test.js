@@ -1,5 +1,24 @@
-const { servicioPorId, cargarServicios } = require("../core/servicios");
+const {
+  servicioPorId,
+  cargarServicios,
+  clickTarjetasServicio,
+} = require("../core/servicios");
 const { servicios } = require("../core/constantes");
+
+beforeEach(() => {
+  document.body.innerHTML = `
+      <section id="turno"></section>
+
+      <select id="serviceType">
+        <option value="">Elegir...</option>
+        <option value="med_consulta">Consulta</option>
+        <option value="estetica_completa">Consulta</option>
+      </select>
+
+      <article class="card card--clickable" data-id="med_consulta"></article>
+      <article class="card card--clickable" data-id="estetica_completa"></article>
+    `;
+});
 
 //Verifica que existan 2 servicios
 test("Debe existir exactamente 2 servicios definidos", () => {
@@ -61,4 +80,34 @@ test("Las tarjetas deben mostrar el tipo de servicio correctamente", () => {
 
   expect(html).toContain("Salud");
   expect(html).toContain("Estética/Baño");
+});
+
+//Si se selecciona la tarjeta de servicio medico redirige al usuario al formulario
+//con el campo de serviceType cargado con ese servicio
+test("Funcionamiento de la seleccion de la tarjeta de servicio medico", () => {
+  const turnoSection = document.querySelector("#turno");
+  turnoSection.scrollIntoView = jest.fn();
+
+  clickTarjetasServicio();
+
+  //simulamos click en la tarjeta
+  const cardMed = document.querySelector('[data-id="med_consulta"]');
+  cardMed.click();
+
+  expect(document.getElementById("serviceType").value).toBe("med_consulta");
+});
+
+//Lo mismo que el anterior pero para el servicio estetico
+test("Funcionamiento de la seleccion de la tarjeta de servicio estetico", () => {
+  const turnoSection = document.querySelector("#turno");
+  turnoSection.scrollIntoView = jest.fn();
+
+  clickTarjetasServicio();
+
+  const cardEstetica = document.querySelector('[data-id="estetica_completa"]');
+  cardEstetica.click();
+
+  expect(document.getElementById("serviceType").value).toBe(
+    "estetica_completa",
+  );
 });

@@ -49,6 +49,8 @@ después tenemos el html "fake" como en los demás tests
 */
 beforeEach(() => {
   jest.clearAllMocks();
+  //resetamos los filtros
+  resetAdminState();
 
   document.body.innerHTML = `
     <button class="chip is-active" data-admin-filter="hoy" id="chipHoy">Hoy</button>
@@ -69,7 +71,7 @@ beforeEach(() => {
   // Iniciamos sesión por defecto
   localStorage.setItem(
     LS_KEYS.session,
-    JSON.stringify({ username: "admin", isAdmin: true })
+    JSON.stringify({ username: "admin", isAdmin: true }),
   );
   getSession.mockReturnValue({ username: "admin", isAdmin: true });
 
@@ -94,7 +96,6 @@ beforeEach(() => {
     return null;
   });
 });
-
 
 //verifica que devuelve los ids correctos al seleccionar los checkboxes del listado de turnos
 test("obtenerIdTurnosSeleccionados debe devolver los ids seleccionados", () => {
@@ -186,6 +187,40 @@ test("initAdmin: chip 'activos' filtra solo status activo", () => {
   expect(html).not.toContain("b1");
 });
 
+//verifica que al clickear el botón "Canelados" para filtrar sólo por turnos cancelados, se muestren esos
+test("initAdmin: chip 'cancelados' filtra solo status cancelado", () => {
+  obtenerTurnos.mockReturnValue([
+    {
+      id: "a1",
+      status: "activo",
+      ownerName: "A",
+      petName: "A",
+      serviceId: "med_consulta",
+      profesionalId: "v1",
+      dateISO: "2026-02-20",
+      time: "10:00",
+    },
+    {
+      id: "b1",
+      status: "cancelado",
+      ownerName: "B",
+      petName: "B",
+      serviceId: "med_consulta",
+      profesionalId: "v1",
+      dateISO: "2026-02-20",
+      time: "11:00",
+    },
+  ]);
+
+  initAdmin();
+
+  document.getElementById("chipCancelados").click();
+
+  const html = document.getElementById("bookingsTbody").innerHTML;
+  expect(html).toContain("b1");
+  expect(html).not.toContain("a1");
+});
+
 //crea 2 turnos y verifica que al clickear seleccionar todos, la cantidad de checkboxes sea 2
 test("initAdmin: selectAll marca todos los checkboxes del listado", () => {
   obtenerTurnos.mockReturnValue([
@@ -216,7 +251,9 @@ test("initAdmin: selectAll marca todos los checkboxes del listado", () => {
   const selectAll = document.getElementById("selectAll");
   selectAll.click();
 
-  const cbs = document.querySelectorAll("#bookingsTbody input[type='checkbox']");
+  const cbs = document.querySelectorAll(
+    "#bookingsTbody input[type='checkbox']",
+  );
   expect(cbs.length).toBe(2);
   cbs.forEach((cb) => expect(cb.checked).toBe(true));
 });
@@ -279,7 +316,9 @@ test("initAdmin: cancelar con selección marca status cancelado y llama actualiz
 
   initAdmin();
 
-  const cbA = document.querySelector("#bookingsTbody input[type='checkbox'][data-id='a1']");
+  const cbA = document.querySelector(
+    "#bookingsTbody input[type='checkbox'][data-id='a1']",
+  );
   cbA.checked = true;
 
   document.getElementById("cancelSelected").click();
@@ -350,6 +389,49 @@ test("initAdmin: filtro por calendario muestra los turnos de esa fecha y activa 
   expect(html).not.toContain("c1");
 });
 
+//Verifica que al cancelar un turno se libere el horario para ese profesional
+test("al cancelar un turno, el horario queda libre para el formulario", () => {
+  // Turno inicialmente activo
+  obtenerTurnos.mockReturnValue([
+    {
+      id: "a1",
+      status: "activo",
+      ownerName: "A",
+      petName: "A",
+      serviceId: "med_consulta",
+      profesionalId: "v1",
+      dateISO: "2026-02-20",
+      time: "10:00",
+    },
+  ]);
+
+  initAdmin();
+
+  // Seleccionamos el turno
+  const cb = document.querySelector(
+    "#bookingsTbody input[type='checkbox'][data-id='a1']",
+  );
+  cb.checked = true;
+
+  document.getElementById("cancelSelected").click();
+
+  // Capturamos lo que se mandó a actualizarTurnos
+  const updated = actualizarTurnos.mock.calls[0][0];
+
+  // Verificamos que ahora esté cancelado
+  expect(updated[0].status).toBe("cancelado");
+
+  // Simulamos que ahora el formulario consulta los turnos actualizados
+  obtenerTurnos.mockReturnValue(updated);
+
+  // Chequeamos que no haya turnos activos en ese horario
+  const turnosActivosEnEseHorario = updated.filter(
+    (t) =>
+      t.dateISO === "2026-02-20" && t.time === "10:00" && t.status === "activo",
+  );
+
+  expect(turnosActivosEnEseHorario.length).toBe(0);
+});
 
 test("no permite inicializar admin si no hay sesión activa", () => {
   // Simulamos que no hay sesión
@@ -362,19 +444,64 @@ test("no permite inicializar admin si no hay sesión activa", () => {
   expect(document.getElementById("bookingsTbody").innerHTML).toBe("");
 });
 
-
 test("permite visualizar el listado si hay sesión activa", () => {
   // Simulamos sesión activa
   getSession.mockReturnValue({ username: "admin", isAdmin: true });
 
   obtenerTurnos.mockReturnValue([
-    { id: "a1", status: "activo", ownerName: "Juanita Fernandez", petName: "A", serviceId: "med_consulta", profesionalId: "v1", dateISO: "2026-02-20", time: "10:00" },
+    {
+      id: "a1",
+      status: "activo",
+      ownerName: "Juanita Fernandez",
+      petName: "A",
+      serviceId: "med_consulta",
+      profesionalId: "v1",
+      dateISO: "2026-02-20",
+      time: "10:00",
+    },
   ]);
-  // reseteamos los filtros
-  resetAdminState();
   document.getElementById("chipHoy").classList.add("is-active");
   document.getElementById("chipActivos").classList.remove("is-active");
   document.getElementById("chipCancelados").classList.remove("is-active");
   initAdmin();
-  expect(document.getElementById("bookingsTbody").innerHTML).toContain("Juanita Fernandez");
+  expect(document.getElementById("bookingsTbody").innerHTML).toContain(
+    "Juanita Fernandez",
+  );
+});
+
+//Verifica que showPicker sea llamado cuando se presiona el boton del calendario
+test("calendarBtn usa showPicker si está disponible", () => {
+  obtenerTurnos.mockReturnValue([]);
+
+  initAdmin();
+
+  const calendarBtn = document.getElementById("calendarFilterBtn");
+  const dateInput = document.getElementById("adminDateFilter");
+
+  // Mockeamos showPicker
+  dateInput.showPicker = jest.fn();
+  dateInput.click = jest.fn();
+
+  calendarBtn.click();
+
+  expect(dateInput.showPicker).toHaveBeenCalledTimes(1);
+  expect(dateInput.click).not.toHaveBeenCalled();
+});
+
+//Verifica que click sea llamado cuando showPicker no existe
+test("calendarBtn usa click si showPicker no existe", () => {
+  obtenerTurnos.mockReturnValue([]);
+
+  initAdmin();
+
+  const calendarBtn = document.getElementById("calendarFilterBtn");
+  const dateInput = document.getElementById("adminDateFilter");
+
+  // Eliminamos showPicker
+  dateInput.showPicker = undefined;
+  dateInput.click = jest.fn();
+
+  calendarBtn.click();
+
+  expect(dateInput.click).toHaveBeenCalledTimes(1);
 });

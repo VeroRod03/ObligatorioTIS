@@ -321,11 +321,11 @@
         );
       })
       .join("");
-    initServiciosClick();
+    clickTarjetasServicio();
   }
 
   //funcion para menejar el comportamiento de las tarjetas de servicio
-  function initServiciosClick() {
+  function clickTarjetasServicio() {
     const cards = document.querySelectorAll(".card--clickable");
 
     cards.forEach((card) => {
@@ -1092,7 +1092,6 @@
       if (e.key === "Escape") closeModal();
     });
   }
-
 
   // ---------- Main ----------
   function main() {

@@ -66,3 +66,16 @@ test("El botón prev desde el primero debe ir al último (loop)", () => {
     `translateX(-${expectedIndex * 100}%)`,
   );
 });
+
+//Verifica que al hacer click en un dot se muestre ese slide y se active el dot correspondiente
+test("Al hacer click en un dot debe ir al slide correspondiente", () => {
+  cargarGaleria();
+
+  const dots = document.querySelectorAll("#carouselDots .dot");
+  const track = document.getElementById("carouselTrack");
+
+  dots[2].click();
+
+  expect(track.style.transform).toContain("translateX(-200%)");
+  expect(dots[2].classList.contains("is-active")).toBe(true);
+});

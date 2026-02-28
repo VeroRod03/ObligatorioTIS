@@ -27,6 +27,7 @@ beforeEach(() => {
     <span id="sessionLabel"></span>
 
     <button id="navTurnos"></button>
+    <button id="navAcceso"></button>
     <button id="logoutBtn"></button>
     <button id="logoutBtnAccess"></button>
 
@@ -70,7 +71,7 @@ test("setSession debe guardar sesión en localStorage", () => {
 test("updateSessionLabel debe mostrar nombre cuando hay sesión activa", () => {
   localStorage.setItem(
     LS_KEYS.session,
-    JSON.stringify({ username: "admin", isAdmin: true })
+    JSON.stringify({ username: "admin", isAdmin: true }),
   );
 
   updateSessionLabel();
@@ -102,9 +103,9 @@ test("initAuth debe iniciar sesión correctamente con credenciales válidas", ()
   document.getElementById("logUser").value = "admin";
   document.getElementById("logPass").value = "admin1234";
 
-  document.getElementById("loginForm").dispatchEvent(
-    new Event("submit", { bubbles: true, cancelable: true })
-  );
+  document
+    .getElementById("loginForm")
+    .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
 
   const session = JSON.parse(localStorage.getItem(LS_KEYS.session));
 
@@ -121,9 +122,9 @@ test("initAuth debe mostrar error si credenciales son incorrectas", () => {
   document.getElementById("logUser").value = "admin";
   document.getElementById("logPass").value = "incorrecta";
 
-  document.getElementById("loginForm").dispatchEvent(
-    new Event("submit", { bubbles: true, cancelable: true })
-  );
+  document
+    .getElementById("loginForm")
+    .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
 
   expect(showToast).toHaveBeenCalledWith("Credenciales incorrectas.");
 });
@@ -136,7 +137,7 @@ test("Debe cerrar sesión al hacer click en logoutBtn", () => {
   // Simulamos sesión activa
   localStorage.setItem(
     LS_KEYS.session,
-    JSON.stringify({ username: "admin", isAdmin: true })
+    JSON.stringify({ username: "admin", isAdmin: true }),
   );
 
   document.getElementById("logoutBtn").click();
@@ -148,7 +149,6 @@ test("Debe cerrar sesión al hacer click en logoutBtn", () => {
   expect(showToast).toHaveBeenCalledWith("Sesión cerrada.");
 });
 
-
 // Verifica que al iniciar sesión se muestre la sección de turnos en la barra de navegación
 test("al iniciar sesión, navTurnos se muestra", () => {
   initAuth();
@@ -156,9 +156,9 @@ test("al iniciar sesión, navTurnos se muestra", () => {
   document.getElementById("logUser").value = "admin";
   document.getElementById("logPass").value = "admin1234";
 
-  document.getElementById("loginForm").dispatchEvent(
-    new Event("submit", { bubbles: true, cancelable: true })
-  );
+  document
+    .getElementById("loginForm")
+    .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
 
   const navTurnos = document.getElementById("navTurnos");
 
@@ -173,7 +173,7 @@ test("al cerrar sesión, navTurnos se oculta", () => {
   // Simular sesión activa
   localStorage.setItem(
     LS_KEYS.session,
-    JSON.stringify({ username: "admin", isAdmin: true })
+    JSON.stringify({ username: "admin", isAdmin: true }),
   );
 
   // actualizar la UI según sesión
@@ -189,22 +189,79 @@ test("al cerrar sesión, navTurnos se oculta", () => {
   expect(navTurnos.style.display).toBe("none");
 });
 
+// Verifica que al iniciar sesión se oculte la seccion de Portal Admin de la barra de navegacion
+test("al iniciar sesión, PortalAdmin se oculta", () => {
+  initAuth();
+
+  document.getElementById("logUser").value = "admin";
+  document.getElementById("logPass").value = "admin1234";
+
+  document
+    .getElementById("loginForm")
+    .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+
+  const navAcceso = document.getElementById("navAcceso");
+
+  expect(navAcceso.hidden).toBe(true);
+  expect(navAcceso.style.display).toBe("none");
+});
+
+// Verifica que al cerrar sesión, Portal Admin se muestre en la barra de navegación
+test("al cerrar sesión, PortalAdmin se muestra", () => {
+  initAuth();
+
+  // Simular sesión activa
+  localStorage.setItem(
+    LS_KEYS.session,
+    JSON.stringify({ username: "admin", isAdmin: true }),
+  );
+
+  // actualizar la UI según sesión
+  updateSessionLabel();
+
+  const navAcceso = document.getElementById("navAcceso");
+  expect(navAcceso.hidden).toBe(true);
+
+  // Hacer logout
+  document.getElementById("logoutBtn").click();
+
+  expect(navAcceso.hidden).toBe(false);
+  expect(navAcceso.style.display).toBe("");
+});
+
 // Verifica que isAdmin funcione correctamente
 test("isAdmin debe retornar true para admin y false para invitado", () => {
   // Sin sesión
-  localStorage.setItem(LS_KEYS.session, JSON.stringify({ username: null, isAdmin: false }));
+  localStorage.setItem(
+    LS_KEYS.session,
+    JSON.stringify({ username: null, isAdmin: false }),
+  );
   expect(isAdmin()).toBe(false);
 
   // Con sesión admin
-  localStorage.setItem(LS_KEYS.session, JSON.stringify({ username: "admin", isAdmin: true }));
+  localStorage.setItem(
+    LS_KEYS.session,
+    JSON.stringify({ username: "admin", isAdmin: true }),
+  );
   expect(isAdmin()).toBe(true);
 });
 
+//Verifica que no se rompa cuando navAcceso no existe
+//validando de esta forma los checkeos "if" que hay en initAuth
+test("no rompe si navAcceso no existe en el DOM", () => {
+  document.body.innerHTML = `
+    <form id="loginForm">
+      <input id="logUser" />
+      <input id="logPass" />
+    </form>
+  `;
 
-// test("no falla si sessionLabel y botones no existen en el DOM", () => {
-//     // DOM vacío para cubrir las ramas 'false' de los if
-//     document.body.innerHTML = ``;
+  expect(() => initAuth()).not.toThrow();
+});
 
-//     expect(() => updateSessionLabel()).not.toThrow();
-//   });
+test("no falla si sessionLabel y botones no existen en el DOM", () => {
+  // DOM vacío para cubrir las ramas 'false' de los if
+  document.body.innerHTML = ``;
 
+  expect(() => updateSessionLabel()).not.toThrow();
+});

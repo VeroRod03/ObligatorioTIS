@@ -46,6 +46,7 @@ const {
   generarSlotsTiempo,
   actualizarHorariosDisponibles,
   formularioTurno,
+  resetFormularioTurno,
 } = require("../core/formulario");
 
 const { renderizarTablaTurnos } = require("../core/listado");
@@ -424,6 +425,10 @@ test("submit: caso OK guarda turno, abre modal, muestra toast, resetea form y re
 
   document.getElementById("bookingForm").dispatchEvent(new Event("submit"));
 
+  //verifica que el modal de solicitud de confirmacion haya aparecido
+  const modal = document.getElementById("confirmReservaModal");
+  expect(modal.classList.contains("confirmModal--hidden")).toBe(false);
+
   document.getElementById("btnConfirmarSi").click();
 
   // guarda
@@ -466,8 +471,68 @@ test("submit: caso OK guarda turno, abre modal, muestra toast, resetea form y re
   expect(renderizarTablaTurnos).toHaveBeenCalled();
 });
 
-// Verifica que al inicializar el formulario, se setee la fecha mínima (date.min) como la fecha actual
-test("setea date.min = hoy al inicializar", () => {
+//Verifica que si se presiona "No" en el modal de solicitud de confirmacion de reserva
+//el turno no se crea y se cierra el modal
+test("si presiona No: oculta modal y no crea turno", () => {
   formularioTurno();
+
+  document.getElementById("serviceType").value = "med_consulta";
+  document.getElementById("profesionalId").value = "v1";
+  document.getElementById("date").value = "2026-02-20";
+  document.getElementById("time").value = "10:00";
+  document.getElementById("ownerName").value = "Juan";
+  document.getElementById("petName").value = "Milo";
+  document.getElementById("phone").value = "099";
+
+  document
+    .getElementById("bookingForm")
+    .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+
+  // modal visible
+  const modal = document.getElementById("confirmReservaModal");
+  expect(modal.classList.contains("confirmModal--hidden")).toBe(false);
+
+  // click en No
+  document.getElementById("btnConfirmarNo").click();
+
+  // modal oculto
+  expect(modal.classList.contains("confirmModal--hidden")).toBe(true);
+
+  // no guarda turno
+  expect(actualizarTurnos).not.toHaveBeenCalled();
+});
+
+// Verifica que al inicializar el formulario, se setee la fecha mínima (date.min) como la fecha actual
+test("Inicializacion de fecha en el formulario", () => {
+  formularioTurno();
+  expect(document.getElementById("date").min).toBe("2026-02-20");
+});
+
+//Verifica que la funcion resetFormularioTurno limpie los campos correctamente
+test("resetFormularioTurno: resetea form, time, profesionales y date.min", () => {
+  // ensuciamos el form
+  document.getElementById("serviceType").value = "med_consulta";
+  document.getElementById("date").value = "2026-02-22";
+  document.getElementById("ownerName").value = "Juan";
+
+  resetFormularioTurno();
+
+  // form reseteado
+  expect(document.getElementById("serviceType").value).toBe("");
+  expect(document.getElementById("date").value).toBe("");
+  expect(document.getElementById("ownerName").value).toBe("");
+
+  // time reseteado con mensaje correcto
+  expect(document.getElementById("time").innerHTML).toContain(
+    "Elegir fecha y profesional primero...",
+  );
+
+  // profesionales recargados todos
+  const html = document.getElementById("profesionalId").innerHTML;
+  expect(html).toContain('value="v1"');
+  expect(html).toContain('value="v2"');
+  expect(html).toContain('value="e1"');
+
+  // date.min actualizado
   expect(document.getElementById("date").min).toBe("2026-02-20");
 });
