@@ -152,7 +152,7 @@ function formularioTurno() {
     const s = servicioPorId(serviceId);
     const p = profesionalPorId(profesionalId);
 
-    const fecha = new Date(dateISO); // para mostrar la fecha con el formato que queremos
+    const fecha = new Date(dateISO + "T00:00:00"); // para mostrar la fecha con el formato que queremos
     const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
       fecha.getMonth() + 1,
     )}/${fecha.getFullYear()}`;

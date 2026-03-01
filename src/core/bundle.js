@@ -796,7 +796,7 @@
       const s = servicioPorId(serviceId);
       const p = profesionalPorId(profesionalId);
 
-      const fecha = new Date(dateISO);
+      const fecha = new Date(dateISO + "T00:00:00");
       const fechaFormateada = `${pad2(fecha.getDate())}/${pad2(
         fecha.getMonth() + 1,
       )}/${fecha.getFullYear()}`;
